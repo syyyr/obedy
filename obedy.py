@@ -66,7 +66,7 @@ if 'blox' in sys.argv[0]:
 elif 'country' in sys.argv[0]:
     menu = country_life()
 else:
-    print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"')
+    print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"\nPoužijte symbolický odkaz k pojmenování skriptu.')
     exit(1)
 
 if len(sys.argv) >= 2:
