@@ -57,7 +57,13 @@ def country_life():
             name = match.group(1)
             name = re.sub('\xa0', '', name)
             name = re.sub(' $', '', name)
+
             allergens = match.group(2)
+            if allergens is not None:
+                allergens = allergens.replace(' ', '')
+                allergens = allergens.replace('(', '')
+                allergens = allergens.replace(')', '')
+
             price = '39 Kč/porce' if count == 0 else '22 Kč/100 g' if datetime.now().hour > 16 else '27 Kč/100 g'
             res[current_day].append({ 'name': name, 'allergens': allergens if allergens is not None else '', 'price': price })
 
