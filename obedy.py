@@ -90,9 +90,9 @@ if day not in menu:
     print('Neznámý den: "' + day + '". Podporované formáty: Pátek|pá|pa')
     exit(1)
 
-name_width = len(max(menu[day], key=lambda index: len(index['name']))['name'])
-alergens_width = len(max(menu[day], key=lambda index: len(index['allergens']))['allergens'])
-price_width = len(max(menu[day], key=lambda index: len(index['price']))['price'])
+name_width = max(len(max(menu[day], key=lambda index: len(index['name']))['name']), len('Název'))
+alergens_width = max(len(max(menu[day], key=lambda index: len(index['allergens']))['allergens']), len('Alergeny'))
+price_width = max(len(max(menu[day], key=lambda index: len(index['price']))['price']), len('Cena'))
 format_string = '{{}}  {{:{}}} {{:>{}}} {{:>{}}}'.format(name_width + 1, alergens_width + 1, price_width + 1)
 
 print(BOLD + ITALIC + GREY + day + NORMAL)
