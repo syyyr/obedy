@@ -69,35 +69,38 @@ def country_life():
 
     return res
 
-if 'blox' in sys.argv[0]:
-    menu = blox()
-elif 'country' in sys.argv[0]:
-    menu = country_life()
-else:
-    print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"\nPoužijte symbolický odkaz k pojmenování skriptu.')
-    exit(1)
+def main():
+    if 'blox' in sys.argv[0]:
+        menu = blox()
+    elif 'country' in sys.argv[0]:
+        menu = country_life()
+    else:
+        print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"\nPoužijte symbolický odkaz k pojmenování skriptu.')
+        exit(1)
 
-if len(sys.argv) >= 2:
-    day = str(sys.argv[1])
-    if len(day) == 2:
-        day = {'po': 'Pondělí', 'út': 'Úterý', 'st': 'Středa', 'čt': 'Čtvrtek', 'pá': 'Pátek',
-                                'ut': 'Úterý',                 'ct': 'Čtvrtek', 'pa': 'Pátek', }[day]
-else:
-    locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8')
-    day = date.today().strftime('%A')
+    if len(sys.argv) >= 2:
+        day = str(sys.argv[1])
+        if len(day) == 2:
+            day = {'po': 'Pondělí', 'út': 'Úterý', 'st': 'Středa', 'čt': 'Čtvrtek', 'pá': 'Pátek',
+                                    'ut': 'Úterý',                 'ct': 'Čtvrtek', 'pa': 'Pátek', }[day]
+    else:
+        locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8')
+        day = date.today().strftime('%A')
 
-if day not in menu:
-    print('Neznámý den: "' + day + '". Podporované formáty: Pátek|pá|pa')
-    exit(1)
+    if day not in menu:
+        print('Neznámý den: "' + day + '". Podporované formáty: Pátek|pá|pa')
+        exit(1)
 
-name_width = max(len(max(menu[day], key=lambda index: len(index['name']))['name']), len('Název'))
-alergens_width = max(len(max(menu[day], key=lambda index: len(index['allergens']))['allergens']), len('Alergeny'))
-price_width = max(len(max(menu[day], key=lambda index: len(index['price']))['price']), len('Cena'))
-format_string = '{{}}  {{:{}}} {{:>{}}} {{:>{}}}'.format(name_width + 1, alergens_width + 1, price_width + 1)
+    name_width = max(len(max(menu[day], key=lambda index: len(index['name']))['name']), len('Název'))
+    alergens_width = max(len(max(menu[day], key=lambda index: len(index['allergens']))['allergens']), len('Alergeny'))
+    price_width = max(len(max(menu[day], key=lambda index: len(index['price']))['price']), len('Cena'))
+    format_string = '{{}}  {{:{}}} {{:>{}}} {{:>{}}}'.format(name_width + 1, alergens_width + 1, price_width + 1)
 
-print(BOLD + ITALIC + GREY + day + NORMAL)
-print(DOUBLE_UNDERLINE + BLUE + BOLD + format_string.format('#', 'Název', 'Alergeny', 'Cena') + NORMAL)
+    print(BOLD + ITALIC + GREY + day + NORMAL)
+    print(DOUBLE_UNDERLINE + BLUE + BOLD + format_string.format('#', 'Název', 'Alergeny', 'Cena') + NORMAL)
 
-for count, meal in enumerate(menu[day]):
-    print(format_string.format(BLUE + BOLD + str(count + 1) + NORMAL, meal['name'], meal['allergens'], meal['price']))
+    for count, meal in enumerate(menu[day]):
+        print(format_string.format(BLUE + BOLD + str(count + 1) + NORMAL, meal['name'], meal['allergens'], meal['price']))
 
+if __name__ == '__main__':
+    main()
