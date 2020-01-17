@@ -53,7 +53,9 @@ def country_life():
         for count, meal in enumerate(meals):
             meal = re.sub(' doporučujeme| NOVINKA', '', meal) # I don't care about this stuff
             match = re.match(r'([^\(]+)(\(.*\))*', meal)
-            name = re.sub('\xa0', '', match.group(1))
+
+            name = match.group(1)
+            name = re.sub('\xa0', '', name)
             name = re.sub(' $', '', name)
             allergens = match.group(2)
             price = '39 Kč/porce' if count == 0 else '22 Kč/100 g' if datetime.now().hour > 16 else '27 Kč/100 g'
