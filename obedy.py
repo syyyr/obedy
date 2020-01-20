@@ -69,11 +69,40 @@ def country_life():
 
     return res
 
+def husa():
+    page = requests.get('http://www.potrefene-husy.cz/cz/dejvice-poledni-menu')
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    res = {}
+
+    monday_tag = soup.find('tr', text='Pondělí')
+    current_day = 'Pondělí'
+    res[current_day] = []
+
+    menu = monday_tag.findAllNext('tr')
+    for item in menu:
+        day_tag = item.find('h3')
+        if day_tag is not None:
+            current_day = day_tag.text
+            res[current_day] = []
+            continue
+        tds = item.findAll('td')
+        if len(tds) == 0: # bogus element between days
+            continue
+        name = tds[1].text
+        name = name.replace(' *', '') # gluten-free - don't care
+        price = tds[2].text
+        res[current_day].append({ 'name': name, 'allergens': '', 'price': price })
+
+    return res
+
 def main():
     if 'blox' in sys.argv[0]:
         menu = blox()
     elif 'country' in sys.argv[0]:
         menu = country_life()
+    elif 'husa' in sys.argv[0]:
+        menu = husa()
     else:
         print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"\nPoužijte symbolický odkaz k pojmenování skriptu.')
         exit(1)
