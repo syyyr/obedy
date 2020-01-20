@@ -32,7 +32,7 @@ def blox():
         meals = item.find_all('td')
         if '\xa0' in meals[3].text: # Nonsense price -> we're already at the end
             break
-        res[current_day].append({ 'name': meals[1].text, 'allergens': meals[2].text, 'price': meals[3].text })
+        res[current_day].append({ 'name': meals[1].text, 'price': meals[3].text })
 
     return res
 
@@ -58,14 +58,8 @@ def country_life():
             name = re.sub('\xa0', '', name)
             name = re.sub(' $', '', name)
 
-            allergens = match.group(2)
-            if allergens is not None:
-                allergens = allergens.replace(' ', '')
-                allergens = allergens.replace('(', '')
-                allergens = allergens.replace(')', '')
-
             price = '39 Kč/porce' if count == 0 else '22 Kč/100 g' if datetime.now().hour > 16 else '27 Kč/100 g'
-            res[current_day].append({ 'name': name, 'allergens': allergens if allergens is not None else '', 'price': price })
+            res[current_day].append({ 'name': name, 'price': price })
 
     return res
 
@@ -92,7 +86,7 @@ def husa():
         name = tds[1].text
         name = name.replace(' *', '') # gluten-free - don't care
         price = tds[2].text
-        res[current_day].append({ 'name': name, 'allergens': '', 'price': price })
+        res[current_day].append({ 'name': name, 'price': price })
 
     return res
 
@@ -121,15 +115,14 @@ def main():
         exit(1)
 
     name_width = max(len(max(menu[day], key=lambda index: len(index['name']))['name']), len('Název'))
-    alergens_width = max(len(max(menu[day], key=lambda index: len(index['allergens']))['allergens']), len('Alergeny'))
     price_width = max(len(max(menu[day], key=lambda index: len(index['price']))['price']), len('Cena'))
-    format_string = '{{}}  {{:{}}} {{:>{}}} {{:>{}}}'.format(name_width + 1, alergens_width + 1, price_width + 1)
+    format_string = '{{}}  {{:{}}} {{:>{}}}'.format(name_width + 1, price_width + 1)
 
     print(BOLD + ITALIC + GREY + day + NORMAL)
-    print(DOUBLE_UNDERLINE + BLUE + BOLD + format_string.format('#', 'Název', 'Alergeny', 'Cena') + NORMAL)
+    print(DOUBLE_UNDERLINE + BLUE + BOLD + format_string.format('#', 'Název', 'Cena') + NORMAL)
 
     for count, meal in enumerate(menu[day]):
-        print(format_string.format(BLUE + BOLD + str(count + 1) + NORMAL, meal['name'], meal['allergens'], meal['price']))
+        print(format_string.format(BLUE + BOLD + str(count + 1) + NORMAL, meal['name'], meal['price']))
 
 if __name__ == '__main__':
     main()
