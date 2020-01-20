@@ -8,7 +8,7 @@ import sys
 import pprint
 
 NORMAL = '\u001b[0m'
-BOLD = '\u001b[2m'
+BOLD = '\u001b[1m'
 ITALIC = '\u001b[3m'
 GREY = '\u001b[38;5;7m'
 BLUE = '\u001b[34m'
