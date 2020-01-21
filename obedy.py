@@ -85,7 +85,8 @@ def husa():
             continue
         name = tds[1].text
         name = name.replace(' *', '') # gluten-free - don't care
-        name = name.replace('Tip šéfkuchaře: ', '')
+        name = name.replace('Tip šéfkuchaře: ', '') # don't care
+        name = re.sub(' +', ' ', name)
         price = tds[2].text
         res[current_day].append({ 'name': name, 'price': price })
 
