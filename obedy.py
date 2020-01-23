@@ -34,7 +34,7 @@ def blox():
             break
         res[current_day].append({ 'name': meals[1].text, 'price': meals[3].text })
 
-    return res
+    return ('Blox', res)
 
 def country_life():
     page = requests.get('https://www.countrylife.cz/mo-dejvice-restaurace')
@@ -61,7 +61,7 @@ def country_life():
             price = '39 Kč/porce' if count == 0 else '22 Kč/100 g' if datetime.now().hour > 16 else '27 Kč/100 g'
             res[current_day].append({ 'name': name, 'price': price })
 
-    return res
+    return ('Country life', res)
 
 def husa():
     page = requests.get('http://www.potrefene-husy.cz/cz/dejvice-poledni-menu')
@@ -91,15 +91,15 @@ def husa():
         price = tds[2].text
         res[current_day].append({ 'name': name, 'price': price })
 
-    return res
+    return ('Potrefená husa', res)
 
 def main():
     if 'blox' in sys.argv[0]:
-        menu = blox()
+        (restaurant, menu) = blox()
     elif 'country' in sys.argv[0]:
-        menu = country_life()
+        (restaurant, menu) = country_life()
     elif 'husa' in sys.argv[0]:
-        menu = husa()
+        (restaurant, menu) = husa()
     else:
         print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"\nPoužijte symbolický odkaz k pojmenování skriptu.')
         exit(1)
@@ -121,11 +121,11 @@ def main():
     price_width = max(len(max(menu[day], key=lambda index: len(index['price']))['price']), len('Cena'))
     format_string = '{{}}  {{:{}}} {{:>{}}}'.format(name_width + 1, price_width + 1)
 
-    print(BOLD + ITALIC + GREY + day + NORMAL)
-    print(DOUBLE_UNDERLINE + BLUE + BOLD + format_string.format('#', 'Název', 'Cena') + NORMAL)
+    print(BOLD + restaurant + NORMAL + ' ' + ITALIC + GREY + day + NORMAL)
+    print(DOUBLE_UNDERLINE + BLUE + format_string.format('#', 'Název', 'Cena') + NORMAL)
 
     for count, meal in enumerate(menu[day]):
-        print(format_string.format(BLUE + BOLD + str(count + 1) + NORMAL, meal['name'], meal['price']))
+        print(format_string.format(BLUE + str(count + 1) + NORMAL, meal['name'], meal['price']))
 
 if __name__ == '__main__':
     main()
