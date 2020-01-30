@@ -1,6 +1,7 @@
 #!/bin/env python
 from bs4 import BeautifulSoup
 from collections import OrderedDict
+from json import dumps as jsonDump
 from datetime import date, datetime, timedelta
 import locale
 import re
@@ -14,6 +15,16 @@ ITALIC = '\u001b[3m'
 GREY = '\u001b[38;5;7m'
 BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
+
+def resToJson(input):
+    res = {}
+    res['restaurant'] = input[0]
+    # Menu has to be a list - JSON can't preserve order otherwise
+    res['menu'] = []
+    for [day, meals] in input[1].items():
+        res['menu'].append({'day': str(day), 'meals': meals})
+
+    return jsonDump(res)
 
 def blox():
     page = requests.get('http://www.blox-restaurant.cz/#!/page_obedy')
