@@ -159,7 +159,7 @@ def main():
     price_width = max(len(max(menu, key=lambda index: len(index['price']))['price']), len('Cena'))
     format_string = '{{}}  {{:{}}} {{:>{}}}'.format(name_width + 1, price_width + 1)
 
-    print(BOLD + restaurant + NORMAL + ' ' + ITALIC + GREY + menu_date.strftime('%A') + ' ' + menu_date.strftime('%d. %B') + NORMAL)
+    print(BOLD + restaurant + NORMAL + ' ' + ITALIC + GREY + menu_date.strftime('%A') + ' ' + str(menu_date.day) + menu_date.strftime('. %B') + NORMAL)
     print(DOUBLE_UNDERLINE + BLUE + format_string.format('#', 'Název', 'Cena') + NORMAL)
 
     for count, meal in enumerate(menu):
