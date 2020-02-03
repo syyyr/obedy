@@ -78,7 +78,8 @@ def country_life():
         day_tag = item.find('strong')
         if day_tag.text == 'Alergeny:': # This is the end
             break
-        match_date = re.match('.* (\d+)\. ([a-z]+)', day_tag.text)
+        day_tag_sanitized = re.sub('\xa0', '', day_tag.text)
+        match_date = re.match('.* (\d+)\. ([a-zěščřžýáíéúů]+)', day_tag_sanitized, flags=re.U)
 
         # Yeah, the year won't work at the end of the year, but I don't really care
         current_date = date(date.today().year, monthToInt[match_date.group(2)], int(match_date.group(1)))
@@ -91,6 +92,8 @@ def country_life():
             name = match.group(1)
             name = re.sub('\xa0', '', name)
             name = re.sub(' $', '', name)
+            if name == '': # sometimes there is one more empty element, lmao
+                break
 
             price = '39 Kč/porce' if count == 0 else '22 Kč/100 g' if datetime.now().hour > 16 else '27 Kč/100 g'
             res[current_date].append({ 'name': name, 'price': price })
