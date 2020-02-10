@@ -72,7 +72,7 @@ def country_life():
     menu = soup.find(text='Jídelní lístek na tento týden:').findNext('div').findAll('p')
     res = OrderedDict()
     for item in menu:
-        if item.text == '': # There are some bogus <p> elements
+        if item.text == '' or item.text == '\xa0': # There are some bogus <p> elements
             continue
 
         day_tag = item.find('strong')
