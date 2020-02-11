@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from collections import OrderedDict
 from json import dumps as jsonDump
 from datetime import date, datetime, timedelta
+from os import environ
 import locale
 import re
 import requests
@@ -15,6 +16,8 @@ ITALIC = '\u001b[3m'
 GREY = '\u001b[38;5;7m'
 BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
+
+ZOMATO_COOKIE = environ.get('ZOMATO_COOKIE')
 
 def resToJson(input):
     res = {}
@@ -136,9 +139,13 @@ def husa():
     return ('Potrefená husa', res)
 
 def komousi():
+    if ZOMATO_COOKIE is None:
+        raise Exception('ZOMATO_COOKIE is not set')
+
     headers = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36',
-        'accept-language': 'en-US,en;q=0.9,cs-CZ;q=0.8,cs;q=0.7'
+        'accept-language': 'en-US,en;q=0.9,cs-CZ;q=0.8,cs;q=0.7',
+        'cookie': ZOMATO_COOKIE
     }
     page = requests.get('https://www.zomato.com/widgets/daily_menu.php?entity_id=16507625', headers=headers)
     soup = BeautifulSoup(page.content, 'html.parser')
