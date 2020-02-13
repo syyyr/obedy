@@ -89,7 +89,7 @@ def country_life():
         res[current_date] = []
         meals = item.text.split('\n')[1:] # Discard the first element - it's the day
         for count, meal in enumerate(meals):
-            meal = re.sub('doporučujeme|NOVINKA', '', meal) # I don't care about this stuff
+            meal = re.sub('[Dd]oporučujeme|NOVINKA', '', meal) # I don't care about this stuff
             match = re.match(r'([^\(]+)(\(.*\))*', meal)
 
             name = match.group(1)
