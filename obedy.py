@@ -68,7 +68,7 @@ def country_life():
         'listopadu': 11,
         'prosince': 12,
     }
-    page = requests.get('https://www.countrylife.cz/mo-dejvice-restaurace')
+    page = requests.get('https://www.countrylife.cz/dejvice-restaurant')
     soup = BeautifulSoup(page.content, 'html.parser')
     menu = soup.find(text='Jídelní lístek na tento týden:').findNext('div').findAll('p')
     res = OrderedDict()
