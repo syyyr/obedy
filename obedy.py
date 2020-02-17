@@ -87,14 +87,19 @@ def country_life():
         res[current_date] = []
         meals = item.text.split('\n')[1:] # Discard the first element - it's the day
         for count, meal in enumerate(meals):
+            match_date = re.match('.* (\d+)\. ([a-zěščřžýáíéúů]+)', meal, flags=re.U) # Sometimes, the menu continues inside the <p> element
+            if match_date:
+                current_date = date(date.today().year, monthToInt[match_date.group(2)], int(match_date.group(1)))
+                res[current_date] = []
+                continue
             meal = re.sub('[Dd]oporučujeme|NOVINKA', '', meal) # I don't care about this stuff
             match = re.match(r'([^\(]+)(\(.*\))*', meal)
 
             name = match.group(1)
             name = re.sub('\xa0', '', name)
             name = re.sub(' $', '', name)
-            if name == '': # sometimes there is one more empty element, lmao
-                break
+            if name == '': # sometimes there are empty elements
+                continue
 
             price = '39 Kč/porce' if count == 0 else '22 Kč/100 g' if datetime.now().hour > 16 else '27 Kč/100 g'
             res[current_date].append({ 'name': name, 'price': price })
