@@ -17,8 +17,6 @@ GREY = '\u001b[38;5;7m'
 BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
 
-ZOMATO_COOKIE = environ.get('ZOMATO_COOKIE')
-
 def resToJson(input):
     res = {}
     res['restaurant'] = input[0]
@@ -137,62 +135,6 @@ def husa():
         res[current_date].append({ 'name': name, 'price': price })
 
     return ('Potrefená husa', res)
-
-def komousi():
-    if ZOMATO_COOKIE is None:
-        raise Exception('ZOMATO_COOKIE is not set')
-
-    headers = {
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36',
-        'accept-language': 'en-US,en;q=0.9,cs-CZ;q=0.8,cs;q=0.7',
-        'cookie': ZOMATO_COOKIE
-    }
-    page = requests.get('https://www.zomato.com/widgets/daily_menu.php?entity_id=16507625', headers=headers)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    days = soup.findAll('div', attrs={'class': 'date'})
-
-    res = OrderedDict()
-    for day in days:
-        date_tag = day.findNext('div', attrs={'class': 'left-div'})
-        match_date = re.match('[^0-9]*(\d+)\.(\d+)\.(\d+)', date_tag.text)
-        current_date = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
-        res[current_date] = []
-
-        meals = date_tag.findAllNext('div', attrs={'class': 'item'})
-        meals_iter = iter(meals)
-        for meal in meals_iter:
-            name_tag = meal.find('div', attrs={'class': 'item-name'})
-            match_name = re.match('[\t\n ]*(\d+ ?(g|ks)?)? *(.+)', name_tag.text)
-            name = re.sub(' *$', '', match_name.group(3))
-
-            price_tag = meal.find('div', attrs={'class': 'item-price'})
-            match_price = re.match('[\t\n ]*(\d+)\xa0Kč', price_tag.text)
-            if match_price is None: # The name can be split into two lines
-                name_tag_next = name_tag.findNext('div', attrs={'class': 'item-name'})
-                match_name_next = re.match('[\t\n ]*(\d+ ?(g|ks)?)? *(.+)', name_tag_next.text)
-                name_next = re.sub(' *$', '', match_name_next.group(3))
-                name = name + name_next
-                next(meals_iter) # We have to advance the iterator once, to skip this
-                continue
-            price = match_price.group(1)
-
-            name = name.replace('  ', ' ')
-
-            res[current_date].append({ 'name': name, 'price': price + ' Kč' })
-
-    # This restaurant doesn't give the menu for the whole week, so we have put some placeholders for the missing days
-    res_all_days = {}
-    (day, _menu) = list(res.items())[0]
-    for i in range(day.weekday()):
-        res_all_days[i] = []
-
-    for (key, value) in res.items():
-        res_all_days[key] = value
-
-    while len(res_all_days) < 5:
-        res_all_days[len(res_all_days)] = []
-
-    return ('Radniční sklípek', res_all_days)
 
 def main():
     if 'blox' in sys.argv[0]:
