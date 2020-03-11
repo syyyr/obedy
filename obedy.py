@@ -92,7 +92,7 @@ def country_life():
                 current_date = date(date.today().year, monthToInt[match_date.group(2)], int(match_date.group(1)))
                 res[current_date] = []
                 continue
-            meal = re.sub('[Dd]oporučujeme|NOVINKA', '', meal) # I don't care about this stuff
+            meal = re.sub('[Dd]oporučujeme|NOVINKA|DOPORUČUJEME', '', meal) # I don't care about this stuff
             match = re.match(r'([^\(]+)(\(.*\))*', meal)
 
             name = match.group(1)
