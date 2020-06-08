@@ -132,6 +132,8 @@ def husa():
         if len(tds) == 0: # bogus element between days
             continue
         name = tds[1].text
+        if name == '--': # Empty menu item - husa now offers one less meal, but leaves the menu item in
+            continue
         name = name.replace(' *', '') # gluten-free - don't care
         name = name.replace('Tip šéfkuchaře: ', '') # don't care
         name = name.replace('\t', '') # bogus tab in name
