@@ -47,7 +47,7 @@ def blox():
 
         meals = item.find_all('td')
         if '\xa0' in meals[3].text: # Nonsense price -> we're already at the end
-            break
+            continue
         price = re.sub('[^0-9]', '', meals[3].text) # Blox formats price weirdly sometimes
         res[current_date].append({ 'name': meals[1].text, 'price': price + " Kč" })
 
