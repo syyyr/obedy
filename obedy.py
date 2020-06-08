@@ -70,7 +70,7 @@ def country_life():
     }
     page = requests.get('https://www.countrylife.cz/dejvice-restaurant')
     soup = BeautifulSoup(page.content, 'html.parser')
-    menu = soup.find(text='Jídelní lístek na tento týden:').findNext('div').findAll('p')
+    menu = soup.find(text='Jídelní lístek na tento týden:').findAllNext('p')
     res = OrderedDict()
     for item in menu:
         if item.text == '' or item.text == '\xa0': # There are some bogus <p> elements
