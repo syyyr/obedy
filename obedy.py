@@ -73,19 +73,23 @@ def country_life():
     soup = BeautifulSoup(page.content, 'html.parser')
     menu = soup.find(text='Jídelní lístek na tento týden:').findAllNext('p')
     res = OrderedDict()
+    current_date = None
     for item in menu:
         if item.text == '' or item.text == '\xa0': # There are some bogus <p> elements
             continue
 
         day_tag = item.find('strong')
-        if day_tag.text == 'Alergeny:': # This is the end
-            break
-        day_tag_sanitized = re.sub('\xa0', '', day_tag.text)
-        match_date = re.match('.* (\d+)\. ([a-zěščřžýáíéúů]+)', day_tag_sanitized, flags=re.U)
+        if day_tag is not None:
+            if day_tag.text == 'Alergeny:': # This is the end
+                break
 
-        # Yeah, the year won't work at the end of the year, but I don't really care
-        current_date = date(date.today().year, monthToInt[match_date.group(2)], int(match_date.group(1)))
-        res[current_date] = []
+            if day_tag is not None: # Sometimes, days span more <p> elements. So if no day_tag is present, we continue with the last day
+                day_tag_sanitized = re.sub('\xa0', '', day_tag.text)
+                match_date = re.match('.* (\d+)\. ([a-zěščřžýáíéúů]+)', day_tag_sanitized, flags=re.U)
+                # Yeah, the year won't work at the end of the year, but I don't really care
+                current_date = date(date.today().year, monthToInt[match_date.group(2)], int(match_date.group(1)))
+                res[current_date] = []
+
         meals = item.text.split('\n')[1:] # Discard the first element - it's the day
         for count, meal in enumerate(meals):
             match_date = re.match('.* (\d+)\. ([a-zěščřžýáíéúů]+)', meal, flags=re.U) # Sometimes, the menu continues inside the <p> element
