@@ -4,6 +4,7 @@ from collections import OrderedDict
 from json import dumps as jsonDump
 from datetime import date, datetime, timedelta
 from os import environ
+import itertools
 import locale
 import re
 import requests
@@ -143,6 +144,51 @@ def husa():
 
     return ('Potrefená husa', res)
 
+def u_petnika():
+    page = requests.get('https://www.upetnika.cz/')
+    soup = BeautifulSoup(page.content, 'html.parser')
+    res = OrderedDict()
+
+    date_tag = soup.find('li', {'class': 'fdm-section-header'})
+    match_date = re.match('Denní menu (\d+)\.(\d+).(\d+)', date_tag.text)
+    # today, because this restaurant offers menu for the current day
+    today = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
+
+    for n in range(0, today.weekday()):
+        res[n] = []
+
+    res[today] = []
+
+    meal_iter = iter(date_tag.findAllNext('div', {'class': 'fdm-item-panel'}))
+
+    for meal in meal_iter:
+        title_tag = meal.find('p', {'class': 'fdm-item-title'})
+        if title_tag is None: # Skips headers like "Polévky:"
+            continue
+        if re.match('.*Za poloviční porce.*', title_tag.text):
+            continue
+        title = title_tag.text
+
+        price_tag = meal.find('div', {'class': 'fdm-item-price'})
+        if price_tag is None: # This is the daily "menu": gotta take the next two elements
+            menu_meal_tag = meal.findNext('div', {'class': 'fdm-item-panel'})
+            menu_meal_title_tag = menu_meal_tag.find('p', {'class': 'fdm-item-title'})
+            menu_meal_title = menu_meal_title_tag.text
+            menu_meal_price_tag = menu_meal_tag.find('div', {'class': 'fdm-item-price'})
+            price = menu_meal_price_tag.text
+            title = title + ' + ' + re.sub('^ +', '', re.sub('\d+g', '', menu_meal_title))
+            next(meal_iter)
+        else:
+            price = price_tag.text
+
+        title = re.sub('\d+g', '', title)
+        title = re.sub('^ +', '', title)
+
+        price = price.replace(',-', '')
+        res[today].append({ 'name': title, 'price': price + " Kč" })
+
+    return ('U Pětníka', res)
+
 def main():
     if 'blox' in sys.argv[0]:
         (restaurant, menu) = blox()
@@ -150,8 +196,8 @@ def main():
         (restaurant, menu) = country_life()
     elif 'husa' in sys.argv[0]:
         (restaurant, menu) = husa()
-    elif 'komousi' in sys.argv[0]:
-        (restaurant, menu) = komousi()
+    elif 'petnik' in sys.argv[0]:
+        (restaurant, menu) = u_petnika()
     else:
         print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"\nPoužijte symbolický odkaz k pojmenování skriptu.')
         exit(1)
