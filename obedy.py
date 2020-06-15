@@ -186,7 +186,7 @@ def u_petnika():
             menu_meal_title = menu_meal_title_tag.text
             menu_meal_price_tag = menu_meal_tag.find('div', {'class': 'fdm-item-price'})
             price = menu_meal_price_tag.text
-            title = title + ' + ' + re.sub('^ +', '', re.sub('\d+g', '', menu_meal_title))
+            title = 'MENU:' + title + ' + ' + re.sub('^ +', '', re.sub('\d+g', '', menu_meal_title))
             next(meal_iter)
         else:
             price = price_tag.text
