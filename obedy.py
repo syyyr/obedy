@@ -197,6 +197,9 @@ def u_petnika():
         price = price.replace(',-', '')
         res[today].append({ 'name': title, 'price': price + " Kč" })
 
+    for n in range(today.weekday() + 1, 5):
+        res[n] = []
+
     return ('U Pětníka', res)
 
 def main():
