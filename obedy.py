@@ -171,8 +171,14 @@ def u_petnika():
             continue
         if re.match('.*Za poloviční porce.*', title_tag.text):
             continue
-        title = title_tag.text
+        if re.match('.*Denní menu.*', title_tag.text):
+            continue
+        if re.match('.*hospůdky.*', title_tag.text):
+            continue
+        if re.match('.*Denní nabídka na a FB.*', title_tag.text): # This comes after the daily menu, so that's the end
+            break
 
+        title = title_tag.text
         price_tag = meal.find('div', {'class': 'fdm-item-price'})
         if price_tag is None: # This is the daily "menu": gotta take the next two elements
             menu_meal_tag = meal.findNext('div', {'class': 'fdm-item-panel'})
