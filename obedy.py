@@ -179,12 +179,24 @@ def u_petnika():
             break
 
         title = title_tag.text
+        if title == "1ks": # I don't care about this
+            continue
         price_tag = meal.find('div', {'class': 'fdm-item-price'})
         if price_tag is None: # This is the daily "menu": gotta take the next two elements
+            menu_meal_price_tag = None
             menu_meal_tag = meal.findNext('div', {'class': 'fdm-item-panel'})
-            menu_meal_title_tag = menu_meal_tag.find('p', {'class': 'fdm-item-title'})
-            menu_meal_title = menu_meal_title_tag.text
-            menu_meal_price_tag = menu_meal_tag.find('div', {'class': 'fdm-item-price'})
+            # Sometimes the menu is in more then the next two elements. The
+            # soup is always in the first one (that's already saved `title`),
+            # then there can be more elements and then the last one should be
+            # the meal (with the price). So I skip until I can find a price and
+            # then continue.
+            while menu_meal_price_tag is None:
+                menu_meal_tag = menu_meal_tag.findNext('div', {'class': 'fdm-item-panel'})
+                menu_meal_title_tag = menu_meal_tag.find('p', {'class': 'fdm-item-title'})
+                menu_meal_title = menu_meal_title_tag.text
+                menu_meal_price_tag = menu_meal_tag.find('div', {'class': 'fdm-item-price'})
+                next(meal_iter)
+
             price = menu_meal_price_tag.text
             title = 'MENU:' + title + ' + ' + re.sub('^ +', '', re.sub('\d+g', '', menu_meal_title))
             next(meal_iter)
