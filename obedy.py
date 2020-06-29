@@ -190,6 +190,7 @@ def u_petnika():
         price = price_tag.text
 
         title = re.sub('\d+g', '', title)
+        title = re.sub('\d+ks', '', title)
         title = re.sub('^ +', '', title)
         title = re.sub('  ', ' ', title)
         title = re.sub('^\+ ', '', title)
