@@ -121,7 +121,7 @@ def husa():
     match_date = re.match('.*od (\d+)\.(\d+)\.(\d+).*', header_with_date.text)
     current_date = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
 
-    monday_tag = soup.find('tr', text='Pondělí')
+    monday_tag = soup.find('tr', text=re.compile('Pondělí'))
     res[current_date] = []
 
     menu = monday_tag.findAllNext('tr')
