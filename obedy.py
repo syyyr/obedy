@@ -102,6 +102,8 @@ def country_life():
             match = re.match(r'([^\(]+)(\(.*\))*', meal)
 
             name = match.group(1)
+            if re.match('ZAVŘENO', name):
+                continue
             name = re.sub('\xa0', '', name)
             name = re.sub(' $', '', name)
             if name == '': # sometimes there are empty elements
