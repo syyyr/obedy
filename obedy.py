@@ -29,6 +29,7 @@ def resToJson(input):
     return jsonDump(res)
 
 def blox():
+    day_regex = re.compile('pondělí|úterý|středa|čtvrtek|pátek', flags=re.I)
     page = requests.get('http://www.blox-restaurant.cz/#!/page_obedy')
     soup = BeautifulSoup(page.content, 'html.parser')
     allTr = iter(soup.find(id='page_obedy').findAll('tr'))
@@ -40,7 +41,7 @@ def blox():
     next(allTr) # Skip first - it's the day tag - to prevent advancing the date too soon
 
     for item in allTr:
-        day_tag = item.find('strong')
+        day_tag = item.find('strong', text=day_regex)
         if day_tag is not None:
             current_date = current_date + timedelta(days=1)
             res[current_date] = []
