@@ -197,6 +197,7 @@ def u_petnika():
         title = re.sub('^ +', '', title)
         title = re.sub('  ', ' ', title)
         title = re.sub('^\+ ', '', title)
+        title = re.sub(' \+ \+ ', ' + ', title)
 
         price = price.replace(',-', '')
         res[today].append({ 'name': title, 'price': price + " Kč" })
