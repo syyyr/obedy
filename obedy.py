@@ -86,7 +86,7 @@ def country_life():
 
             if day_tag is not None: # Sometimes, days span more <p> elements. So if no day_tag is present, we continue with the last day
                 day_tag_sanitized = re.sub('\xa0', '', day_tag.text)
-                match_date = re.match('.* (\d+)\. ([a-zěščřžýáíéúů]+)', day_tag_sanitized, flags=re.U)
+                match_date = re.match('.* (\d+)\.? ([a-zěščřžýáíéúů]+)', day_tag_sanitized, flags=re.U)
                 # Yeah, the year won't work at the end of the year, but I don't really care
                 current_date = date(date.today().year, monthToInt[match_date.group(2)], int(match_date.group(1)))
                 res[current_date] = []
