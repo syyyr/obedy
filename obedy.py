@@ -151,20 +151,29 @@ def husa():
 
     return ('Potrefená husa', res)
 
+def fill_preceding_days(day, input):
+    for n in range(0, day.weekday()):
+        input[n] = []
+
+    input[day] = []
+    return input
+
+def fill_following_days(day, input):
+    for n in range(day.weekday() + 1, 5):
+        input[n] = []
+
+    return input
+
 def u_petnika():
     page = requests.get('https://www.upetnika.cz/')
     soup = BeautifulSoup(page.content, 'html.parser')
-    res = OrderedDict()
 
     date_tag = soup.find('li', {'class': 'fdm-section-header'})
     match_date = re.match('Denní menu (\d+)\.(\d+).(\d+)', date_tag.text)
     # today, because this restaurant offers menu for the current day
     today = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
 
-    for n in range(0, today.weekday()):
-        res[n] = []
-
-    res[today] = []
+    res = fill_preceding_days(today, OrderedDict());
 
     meal_iter = iter(date_tag.findAllNext('div', {'class': 'fdm-item-panel'}))
 
