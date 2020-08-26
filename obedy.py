@@ -94,7 +94,7 @@ def country_life():
         meals = item.text.split('\n')[1:] # Discard the first element - it's the day
         for count, meal in enumerate(meals):
             match_date = re.match('.* (\d+)\. ([a-zěščřžýáíéúů]+)', meal, flags=re.U) # Sometimes, the menu continues inside the <p> element
-            if match_date:
+            if match_date is not None:
                 current_date = date(date.today().year, monthToInt[match_date.group(2)], int(match_date.group(1)))
                 res[current_date] = []
                 continue
