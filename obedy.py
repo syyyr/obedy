@@ -247,9 +247,8 @@ def technicka():
         minutka = False
 
         price_tags = row.findAll('td', text=price_regex)
-        price_student_match = re.match('\s+(\d+)', price_tags[0].text)
         price_normal_match = re.match('\s+(\d+)', price_tags[1].text)
-        price = price_normal_match.group(1) + ' Kč / ' + price_student_match.group(1) + ' Kč (student)'
+        price = price_normal_match.group(1) + ' Kč'
         res[today].append({ 'name': meal, 'price': price})
 
     res = fill_following_days(today, res)
