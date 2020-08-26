@@ -109,7 +109,7 @@ def country_life():
             if name == '': # sometimes there are empty elements
                 continue
 
-            price = '39 Kč/porce' if count == 0 else '22 Kč/100 g' if datetime.now().hour > 16 else '27 Kč/100 g'
+            price = '29 Kč/100 g'
             res[current_date].append({ 'name': name, 'price': price })
 
 
