@@ -211,10 +211,50 @@ def u_petnika():
         price = price.replace(',-', '')
         res[today].append({ 'name': title, 'price': price + " Kč" })
 
-    for n in range(today.weekday() + 1, 5):
-        res[n] = []
+    res = fill_following_days(today, res)
 
     return ('U Pětníka', res)
+
+def technicka():
+    page = requests.get('https://agata.suz.cvut.cz/jidelnicky/index.php?clPodsystem=3')
+    soup = BeautifulSoup(page.content, 'html.parser')
+    res = OrderedDict()
+
+    rows = soup.find('tbody').findAll('tr')
+    date_tag = soup.find('b')
+    match_date = re.match('[^0-9]*(\d+)\. (\d+)\. (\d+)', date_tag.text)
+
+    # Menza only offers daily menus
+    today = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
+
+    res = fill_preceding_days(today, OrderedDict());
+
+    price_regex = re.compile('Kč')
+    minutka = False
+
+    for row in rows:
+        header = row.find('th')
+        meal = ''
+        if header is not None:
+            # Might be useful to specify "Minutky"
+            if header.text == 'Minutky':
+                minutka = True
+            continue
+
+        meal_tag = row.find('td', attrs={'style':''})
+        meal = ('Minutka: ' if minutka else '') + meal_tag.text
+        # Reset this, just in case there are more meals after "Minutky"
+        minutka = False
+
+        price_tags = row.findAll('td', text=price_regex)
+        price_student_match = re.match('\s+(\d+)', price_tags[0].text)
+        price_normal_match = re.match('\s+(\d+)', price_tags[1].text)
+        price = price_normal_match.group(1) + ' Kč / ' + price_student_match.group(1) + ' Kč (student)'
+        res[today].append({ 'name': meal, 'price': price})
+
+    res = fill_following_days(today, res)
+
+    return ('Technická menza', res)
 
 def main():
     if 'blox' in sys.argv[0]:
@@ -225,6 +265,8 @@ def main():
         (restaurant, menu) = husa()
     elif 'petnik' in sys.argv[0]:
         (restaurant, menu) = u_petnika()
+    elif 'technicka' in sys.argv[0]:
+        (restaurant, menu) = technicka()
     else:
         print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"\nPoužijte symbolický odkaz k pojmenování skriptu.')
         exit(1)
