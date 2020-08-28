@@ -267,7 +267,7 @@ def main():
     elif 'technicka' in sys.argv[0]:
         (restaurant, menu) = technicka()
     else:
-        print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country"\nPoužijte symbolický odkaz k pojmenování skriptu.')
+        print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country", "husa, "petnik", "technicka"\nPoužijte symbolický odkaz k pojmenování skriptu.')
         exit(1)
 
     locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
