@@ -122,6 +122,8 @@ def husa():
     res = OrderedDict()
     header_with_date = soup.find('h2')
     match_date = re.match('.*od (\d+)\.(\d+)\.(\d+).*', header_with_date.text)
+    if match_date is None: # sometimes, the date has a different format
+        match_date = re.match('.*(\d+)\.(\d+)\. - \d+\.\d+\.(\d+)', header_with_date.text)
     current_date = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
 
     monday_tag = soup.find('tr', text=re.compile('Pondělí'))
