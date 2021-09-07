@@ -116,15 +116,15 @@ def country_life():
     return ('Country life', res)
 
 def husa():
-    page = requests.get('http://www.potrefene-husy.cz/cz/dejvice-poledni-menu')
+    page = requests.get('https://www.restaurace-bulvar.cz/cz/dejvice-poledni-menu')
     soup = BeautifulSoup(page.content, 'html.parser')
 
     res = OrderedDict()
     header_with_date = soup.find('h2')
-    match_date = re.match('.*od (\d+)\.(\d+)\.(\d+).*', header_with_date.text)
+    match_date = re.match(r'.*(nabídka|od) (\d+)\.(\d+)\.(\d+).*', header_with_date.text)
     if match_date is None: # sometimes, the date has a different format
-        match_date = re.match('.*(\d+)\.(\d+)\. - \d+\.\d+\.(\d+)', header_with_date.text)
-    current_date = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
+        match_date = re.match(r'.*(\d+)\.(\d+)\. - \d+\.\d+\.(\d+)', header_with_date.text)
+    current_date = date(int(match_date.group(4)), int(match_date.group(3)), int(match_date.group(2)))
 
     monday_tag = soup.find('tr', text=re.compile('Pondělí'))
     res[current_date] = []
@@ -151,7 +151,7 @@ def husa():
         price = tds[2].text
         res[current_date].append({ 'name': name, 'price': price })
 
-    return ('Potrefená husa', res)
+    return ('Restaurace Bulvár (dříve Potrefená husa)', res)
 
 def fill_preceding_days(day, input):
     for n in range(0, day.weekday()):
