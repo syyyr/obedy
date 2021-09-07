@@ -171,7 +171,9 @@ def u_petnika():
     soup = BeautifulSoup(page.content, 'html.parser')
 
     date_tag = soup.find('li', {'class': 'fdm-section-header'})
-    match_date = re.match('Denní menu (\d+)\.(\d+).(\d+)', date_tag.text)
+    # bogus newlines around the date
+    date_text = date_tag.text.replace('\n', '')
+    match_date = re.match(r'Denní menu (\d+)\.(\d+).(\d+)', date_text)
     # today, because this restaurant offers menu for the current day
     today = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
 
@@ -183,6 +185,8 @@ def u_petnika():
         title_tag = meal.find('p', {'class': 'fdm-item-title'})
         if title_tag is None: # Skips headers like "Polévky:"
             continue
+        if re.match('.*DENNÍ MENU.*', title_tag.text):
+            continue
         if re.match('.*Za poloviční porce.*', title_tag.text):
             continue
         if re.match('.*Denní menu.*', title_tag.text):
@@ -193,13 +197,16 @@ def u_petnika():
             break
 
         title = title_tag.text
+        # sometimes, there's just a price instead of the title
+        # Petnik is VERY unpredictable and always comes up with new layouts
+        if re.match(r'.*\d*,-.*', title):
+            continue
         price_tag = meal.find('div', {'class': 'fdm-item-price'})
         while price_tag is None:
             meal = meal.findNext('div', {'class': 'fdm-item-panel'})
             title_tag = meal.find('p', {'class': 'fdm-item-title'})
             title = title + " + " + title_tag.text
             price_tag = meal.find('div', {'class': 'fdm-item-price'})
-            next(meal_iter)
 
         price = price_tag.text
 
