@@ -265,22 +265,22 @@ def technicka():
     return ('Technická menza', res)
 
 def main():
-    if 'blox' in sys.argv[0]:
+    if 'blox' in sys.argv[1]:
         (restaurant, menu) = blox()
-    elif 'country' in sys.argv[0]:
+    elif 'country' in sys.argv[1]:
         (restaurant, menu) = country_life()
-    elif 'husa' in sys.argv[0]:
+    elif 'husa' in sys.argv[1]:
         (restaurant, menu) = husa()
-    elif 'petnik' in sys.argv[0]:
+    elif 'petnik' in sys.argv[1]:
         (restaurant, menu) = u_petnika()
-    elif 'technicka' in sys.argv[0]:
+    elif 'technicka' in sys.argv[1]:
         (restaurant, menu) = technicka()
     else:
-        print('Název skriptu musí obsahovat jedno z těchto slov: "blox", "country", "husa, "petnik", "technicka"\nPoužijte symbolický odkaz k pojmenování skriptu.')
+        print('První argment skriptu musí obsahovat jedno z těchto slov: "blox", "country", "husa, "petnik", "technicka"')
         exit(1)
 
     locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
-    if len(sys.argv) >= 2:
+    if len(sys.argv) >= 3:
         weekdayStr = str(sys.argv[1])
         weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
     else:
