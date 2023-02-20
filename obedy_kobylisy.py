@@ -75,6 +75,17 @@ def kozlovna():
 
 def soucku():
     def func(name, price):
+        # Do not shout.
+        name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
+
+        # Add spaces around plus signs.
+        name = re.sub(r'(\+)(\S)', r'\1 \2', name)
+
+        # Sometimes, the price is in the meal name.
+        match = re.search(r' /(\d+)$', name)
+        if match is not None:
+            name = re.sub(match.re, '', name)
+            price = match.group(1) + ' Kč'
         return (name, price)
 
     return ('U Součků', impl_menicka(2457, func))
