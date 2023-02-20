@@ -134,8 +134,10 @@ def main():
     price_width = 0
 
     for (restaurant, (menu_date, menu)) in daily_menus:
-        name_width = max(len(max(menu, key=lambda index: len(index['name']))['name']), len('Název'), name_width)
-        price_width = max(len(max(menu, key=lambda index: len(index['price']))['price']), len('Cena'), price_width)
+        longest_meal_name = max(menu, key=lambda it: len(it['name']))['name']
+        longest_price_name = max(menu, key=lambda it: len(it['price']))['price']
+        name_width = max(len(longest_meal_name), len('Název'), name_width)
+        price_width = max(len(longest_price_name), len('Cena'), price_width)
 
     format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
 
