@@ -142,8 +142,10 @@ def main():
     format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
 
     for (restaurant, (menu_date, menu)) in daily_menus:
-        print(BOLD + restaurant + NORMAL + ' ' + ITALIC + GREY + menu_date.strftime('%A') + ' ' + str(menu_date.day) + menu_date.strftime('. %B') + NORMAL)
-        print(DOUBLE_UNDERLINE + BLUE + format_string.format('#', 'Název', 'Cena') + NORMAL)
+        date_str = menu_date.strftime("%A %d. %B")
+        print(f'{BOLD}{restaurant}{NORMAL} {ITALIC}{GREY}{date_str}{NORMAL}')
+        header_str = format_string.format("#", "Název", "Cena")
+        print(f'{DOUBLE_UNDERLINE}{BLUE}{header_str}{NORMAL}')
 
         for count, meal in enumerate(menu):
             print(format_string.format(str(count + 1), meal['name'], meal['price']))
