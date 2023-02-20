@@ -76,7 +76,19 @@ def cihelna():
     return ('U Cihelny', impl_menicka(5879, func))
 
 def kozlovna():
-    return ('Kozlovna Almara', impl_menicka(4165, default_correction_func))
+    def func(name, price):
+        # Sometimes, the salad is on the same row.
+        dual_entry_match = re.match(r'(.+) (\d+), - (.+)', name)
+        if dual_entry_match is not None:
+            return [
+                (dual_entry_match.group(1), dual_entry_match.group(2) + " Kč"),
+                (dual_entry_match.group(3), price)
+            ]
+
+        name = re.sub(r'Dezert - ', '', name)
+        name = re.sub(r'Dezert - ', '', name)
+        return [(name, price)]
+    return ('Kozlovna Almara', impl_menicka(4165, func))
 
 def soucku():
     def func(name, price):
