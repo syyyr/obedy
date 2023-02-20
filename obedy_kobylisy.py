@@ -91,40 +91,45 @@ def soucku():
     return ('U Součků', impl_menicka(2457, func))
 
 def main():
-    if 'blekoti' in sys.argv[1]:
-        (restaurant, menu) = blekoti()
-    elif 'cihelna' in sys.argv[1]:
-        (restaurant, menu) = cihelna()
-    elif 'kozlovna' in sys.argv[1]:
-        (restaurant, menu) = kozlovna()
-    elif 'soucku' in sys.argv[1]:
-        (restaurant, menu) = soucku()
+    if len(sys.argv) >= 2:
+        requested_restaurants = [sys.argv[1]]
     else:
-        print('První argument skriptu musí obsahovat jedno z těchto slov: "blekoti", "cihelna", "kozlovna", "soucku"')
-        return 1
+        requested_restaurants = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
 
-    locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
-    if len(sys.argv) >= 3:
-        weekdayStr = str(sys.argv[2])
-        weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
-    else:
-        weekday = date.today().weekday()
+    for restaurant in requested_restaurants:
+        if 'blekoti' in restaurant:
+            (restaurant, menu) = blekoti()
+        elif 'cihelna' in restaurant:
+            (restaurant, menu) = cihelna()
+        elif 'kozlovna' in restaurant:
+            (restaurant, menu) = kozlovna()
+        elif 'soucku' in restaurant:
+            (restaurant, menu) = soucku()
+        else:
+            print(f'Neznámá restaurace {restaurant}')
 
-    if weekday is None:
-        print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
-        return 1
+        locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
+        if len(sys.argv) >= 3:
+            weekdayStr = str(sys.argv[2])
+            weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
+        else:
+            weekday = date.today().weekday()
 
-    (menu_date, menu) = list(menu.items())[weekday]
+        if weekday is None:
+            print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
+            return 1
 
-    name_width = max(len(max(menu, key=lambda index: len(index['name']))['name']), len('Název'))
-    price_width = max(len(max(menu, key=lambda index: len(index['price']))['price']), len('Cena'))
-    format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
+        (menu_date, menu) = list(menu.items())[weekday]
 
-    print(BOLD + restaurant + NORMAL + ' ' + ITALIC + GREY + menu_date.strftime('%A') + ' ' + str(menu_date.day) + menu_date.strftime('. %B') + NORMAL)
-    print(DOUBLE_UNDERLINE + BLUE + format_string.format('#', 'Název', 'Cena') + NORMAL)
+        name_width = max(len(max(menu, key=lambda index: len(index['name']))['name']), len('Název'))
+        price_width = max(len(max(menu, key=lambda index: len(index['price']))['price']), len('Cena'))
+        format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
 
-    for count, meal in enumerate(menu):
-        print(format_string.format(str(count + 1), meal['name'], meal['price']))
+        print(BOLD + restaurant + NORMAL + ' ' + ITALIC + GREY + menu_date.strftime('%A') + ' ' + str(menu_date.day) + menu_date.strftime('. %B') + NORMAL)
+        print(DOUBLE_UNDERLINE + BLUE + format_string.format('#', 'Název', 'Cena') + NORMAL)
+
+        for count, meal in enumerate(menu):
+            print(format_string.format(str(count + 1), meal['name'], meal['price']))
 
     return 0
 
