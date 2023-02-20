@@ -29,7 +29,7 @@ def resToJson(input_arg):
 
     return jsonDump(res)
 
-def impl_menicka(restaurant_id):
+def impl_menicka(restaurant_id, correction_func):
     page_content = requests.get(f'https://www.menicka.cz/tisk.php?restaurace={restaurant_id}', timeout=5000).content
     soup = BeautifulSoup(page_content, 'html.parser')
     all_menus = soup.find_all('div', attrs={'class': 'content'})
@@ -54,21 +54,30 @@ def impl_menicka(restaurant_id):
             meal_name = re.sub(' +', ' ', meal_name) # repeating spaces
 
             meal_price_tag = meal_tag.find('td', attrs={'class': 'prize'})
-            res[day].append({'name': meal_name, 'price': meal_price_tag.text})
+            (meal_name_corrected, meal_price_corrected) = correction_func(meal_name, meal_price_tag.text)
+
+            res[day].append({'name': meal_name_corrected, 'price': meal_price_corrected})
 
     return res
 
+def default_correction_func(name, price):
+    return (name, price)
+
+
 def blekoti():
-    return ('U Blekotů', impl_menicka(2421))
+    return ('U Blekotů', impl_menicka(2421, default_correction_func))
 
 def cihelna():
-    return ('U Cihelny', impl_menicka(5879))
+    return ('U Cihelny', impl_menicka(5879, default_correction_func))
 
 def kozlovna():
-    return ('Kozlovna Almara', impl_menicka(4165))
+    return ('Kozlovna Almara', impl_menicka(4165, default_correction_func))
 
 def soucku():
-    return ('U Součků', impl_menicka(2457))
+    def func(name, price):
+        return (name, price)
+
+    return ('U Součků', impl_menicka(2457, func))
 
 def main():
     if 'blekoti' in sys.argv[1]:
