@@ -54,9 +54,14 @@ def impl_menicka(restaurant_id):
 def blekoti():
     return ('U Blekotů', impl_menicka(2421))
 
+def cihelna():
+    return ('U Cihelny', impl_menicka(5879))
+
 def main():
     if 'blekoti' in sys.argv[1]:
         (restaurant, menu) = blekoti()
+    elif 'cihelna' in sys.argv[1]:
+        (restaurant, menu) = cihelna()
     else:
         print('První argument skriptu musí obsahovat jedno z těchto slov: "blekoti"')
         return 1
