@@ -18,6 +18,7 @@ BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
 
 requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=60 * 60 * 1) # expire after one hour
+ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
 
 def resToJson(input_arg):
     res = {}
@@ -111,7 +112,7 @@ def main():
     if len(sys.argv) >= 2:
         requested_restaurants = [sys.argv[1]]
     else:
-        requested_restaurants = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
+        requested_restaurants = ALL_RESTAURANTS
 
     for restaurant in requested_restaurants:
         if 'blekoti' in restaurant:
