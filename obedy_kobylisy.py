@@ -124,8 +124,9 @@ def main():
         print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
         return 1
 
-    for restaurant in (restaurant for restaurant in requested_restaurants if restaurant not in globals()):
-        print(f'Neznámá restaurace "{restaurant}".')
+    for restaurant in requested_restaurants:
+        if restaurant not in globals():
+            print(f'Neznámá restaurace "{restaurant}".')
 
     weekly_menus = [globals()[restaurant]() for restaurant in requested_restaurants if restaurant in globals()]
     daily_menus = [(name, list(weekly_menus.items())[weekday]) for (name, weekly_menus) in weekly_menus]
