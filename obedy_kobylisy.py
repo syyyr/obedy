@@ -19,12 +19,12 @@ DOUBLE_UNDERLINE = '\u001b[21m'
 
 requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=60 * 60 * 1) # expire after one hour
 
-def resToJson(input):
+def resToJson(input_arg):
     res = {}
-    res['restaurant'] = input[0]
+    res['restaurant'] = input_arg[0]
     # Menu has to be a list - JSON can't preserve order otherwise
     res['menu'] = []
-    for [day, meals] in input[1].items():
+    for [day, meals] in input_arg[1].items():
         res['menu'].append({'day': str(day), 'meals': meals})
 
     return jsonDump(res)
