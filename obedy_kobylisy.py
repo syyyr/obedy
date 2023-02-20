@@ -43,8 +43,8 @@ def impl_menicka(restaurant_id):
         for meal_tag in menu_tag.find_all('tr'):
             meal_name_tag = meal_tag.find('td', attrs={'class': 'food'})
             meal_name = meal_name_tag.text
-            # Sometimes, there is a bogus row with "Polévka" in it.
-            if meal_name == 'Polévka':
+            # Sometimes, there are bogus rows.
+            if meal_name in ('Polévka', 'Hlavní jídla:'):
                 continue
             # Get rid of unnecessary information about the meal.
             meal_name = re.sub(r'\d+g', '', meal_name) # g
@@ -66,6 +66,9 @@ def cihelna():
 def kozlovna():
     return ('Kozlovna Almara', impl_menicka(4165))
 
+def soucku():
+    return ('U Součků', impl_menicka(2457))
+
 def main():
     if 'blekoti' in sys.argv[1]:
         (restaurant, menu) = blekoti()
@@ -73,8 +76,10 @@ def main():
         (restaurant, menu) = cihelna()
     elif 'kozlovna' in sys.argv[1]:
         (restaurant, menu) = kozlovna()
+    elif 'soucku' in sys.argv[1]:
+        (restaurant, menu) = soucku()
     else:
-        print('První argument skriptu musí obsahovat jedno z těchto slov: "blekoti", "cihelna", "kozlovna"')
+        print('První argument skriptu musí obsahovat jedno z těchto slov: "blekoti", "cihelna", "kozlovna", "soucku"')
         return 1
 
     locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
