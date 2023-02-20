@@ -56,8 +56,8 @@ def main():
     if 'blekoti' in sys.argv[1]:
         (restaurant, menu) = blekoti()
     else:
-        print('První argment skriptu musí obsahovat jedno z těchto slov: "blox", "country", "husa, "petnik", "technicka"')
-        sys.exit(1)
+        print('První argument skriptu musí obsahovat jedno z těchto slov: "blekoti"')
+        return 1
 
     locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
     if len(sys.argv) >= 3:
@@ -68,7 +68,7 @@ def main():
 
     if weekday is None:
         print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
-        sys.exit(1)
+        return 1
 
     (menu_date, menu) = list(menu.items())[weekday]
 
@@ -82,5 +82,8 @@ def main():
     for count, meal in enumerate(menu):
         print(format_string.format(str(count + 1), meal['name'], meal['price']))
 
+    return 0
+
 if __name__ == '__main__':
-    main()
+    code = main()
+    sys.exit(code)
