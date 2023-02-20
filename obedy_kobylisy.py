@@ -113,35 +113,33 @@ def main():
     else:
         requested_restaurants = ALL_RESTAURANTS
 
-    for restaurant in requested_restaurants:
-        if 'blekoti' in restaurant:
-            (restaurant, menu) = blekoti()
-        elif 'cihelna' in restaurant:
-            (restaurant, menu) = cihelna()
-        elif 'kozlovna' in restaurant:
-            (restaurant, menu) = kozlovna()
-        elif 'soucku' in restaurant:
-            (restaurant, menu) = soucku()
-        else:
-            print(f'Neznámá restaurace {restaurant}')
+    locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
+    if len(sys.argv) >= 3:
+        weekdayStr = str(sys.argv[2])
+        weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
+    else:
+        weekday = date.today().weekday()
 
-        locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
-        if len(sys.argv) >= 3:
-            weekdayStr = str(sys.argv[2])
-            weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
-        else:
-            weekday = date.today().weekday()
+    if weekday is None:
+        print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
+        return 1
 
-        if weekday is None:
-            print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
-            return 1
+    for restaurant in (restaurant for restaurant in requested_restaurants if restaurant not in globals()):
+        print(f'Neznámá restaurace "{restaurant}".')
 
-        (menu_date, menu) = list(menu.items())[weekday]
+    weekly_menus = [globals()[restaurant]() for restaurant in requested_restaurants if restaurant in globals()]
+    daily_menus = [(name, list(weekly_menus.items())[weekday]) for (name, weekly_menus) in weekly_menus]
 
-        name_width = max(len(max(menu, key=lambda index: len(index['name']))['name']), len('Název'))
-        price_width = max(len(max(menu, key=lambda index: len(index['price']))['price']), len('Cena'))
-        format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
+    name_width = 0
+    price_width = 0
 
+    for (restaurant, (menu_date, menu)) in daily_menus:
+        name_width = max(len(max(menu, key=lambda index: len(index['name']))['name']), len('Název'), name_width)
+        price_width = max(len(max(menu, key=lambda index: len(index['price']))['price']), len('Cena'), price_width)
+
+    format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
+
+    for (restaurant, (menu_date, menu)) in daily_menus:
         print(BOLD + restaurant + NORMAL + ' ' + ITALIC + GREY + menu_date.strftime('%A') + ' ' + str(menu_date.day) + menu_date.strftime('. %B') + NORMAL)
         print(DOUBLE_UNDERLINE + BLUE + format_string.format('#', 'Název', 'Cena') + NORMAL)
 
