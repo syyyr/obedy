@@ -87,7 +87,6 @@ def kozlovna():
             ]
 
         name = re.sub(r'Dezert - ', '', name)
-        name = re.sub(r'Dezert - ', '', name)
         return [(name, price)]
     return ('Kozlovna Almara', impl_menicka(4165, func))
 
