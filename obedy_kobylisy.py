@@ -26,8 +26,8 @@ def resToJson(input):
 
     return jsonDump(res)
 
-def blekoti():
-    page_content = requests.get('https://www.menicka.cz/tisk.php?restaurace=2421', timeout=5000).content
+def impl_menicka(restaurant_id):
+    page_content = requests.get(f'https://www.menicka.cz/tisk.php?restaurace={restaurant_id}', timeout=5000).content
     soup = BeautifulSoup(page_content, 'html.parser')
     all_menus = soup.find_all('div', attrs={'class': 'content'})
     res = OrderedDict()
@@ -49,8 +49,10 @@ def blekoti():
             meal_price_tag = meal_tag.find('td', attrs={'class': 'prize'})
             res[day].append({'name': meal_name, 'price': meal_price_tag.text})
 
-    return ('U blekotů', res)
+    return res
 
+def blekoti():
+    return ('U Blekotů', impl_menicka(2421))
 
 def main():
     if 'blekoti' in sys.argv[1]:
