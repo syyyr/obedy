@@ -68,7 +68,12 @@ def blekoti():
     return ('U Blekotů', impl_menicka(2421, default_correction_func))
 
 def cihelna():
-    return ('U Cihelny', impl_menicka(5879, default_correction_func))
+    def func(name, price):
+        name = re.sub(f' {re.sub(" Kč", "", price)}', '', name)
+        name = re.sub(r', -', ',', name)
+        return (name, price)
+
+    return ('U Cihelny', impl_menicka(5879, func))
 
 def kozlovna():
     return ('Kozlovna Almara', impl_menicka(4165, default_correction_func))
