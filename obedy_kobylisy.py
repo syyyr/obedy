@@ -6,6 +6,7 @@ from collections import OrderedDict
 from datetime import date
 from json import dumps as jsonDump
 
+import requests_cache
 import requests
 from bs4 import BeautifulSoup
 
@@ -15,6 +16,8 @@ ITALIC = '\u001b[3m'
 GREY = '\u001b[38;5;7m'
 BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
+
+requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=60 * 60 * 1) # expire after one hour
 
 def resToJson(input):
     res = {}
