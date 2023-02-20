@@ -54,15 +54,15 @@ def impl_menicka(restaurant_id, correction_func):
             meal_name = re.sub(' +', ' ', meal_name) # repeating spaces
 
             meal_price_tag = meal_tag.find('td', attrs={'class': 'prize'})
-            (meal_name_corrected, meal_price_corrected) = correction_func(meal_name, meal_price_tag.text)
+            corrected = correction_func(meal_name, meal_price_tag.text)
 
-            res[day].append({'name': meal_name_corrected, 'price': meal_price_corrected})
+            for (meal_name_corrected, meal_price_corrected) in corrected:
+                res[day].append({'name': meal_name_corrected, 'price': meal_price_corrected})
 
     return res
 
 def default_correction_func(name, price):
-    return (name, price)
-
+    return [(name, price)]
 
 def blekoti():
     return ('U Blekotů', impl_menicka(2421, default_correction_func))
@@ -71,7 +71,7 @@ def cihelna():
     def func(name, price):
         name = re.sub(f' {re.sub(" Kč", "", price)}', '', name)
         name = re.sub(r', -', ',', name)
-        return (name, price)
+        return [(name, price)]
 
     return ('U Cihelny', impl_menicka(5879, func))
 
@@ -91,7 +91,7 @@ def soucku():
         if match is not None:
             name = re.sub(match.re, '', name)
             price = match.group(1) + ' Kč'
-        return (name, price)
+        return [(name, price)]
 
     return ('U Součků', impl_menicka(2457, func))
 
