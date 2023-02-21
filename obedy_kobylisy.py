@@ -78,6 +78,7 @@ def cihelna():
     def func(name, price):
         name = re.sub(f' {re.sub(" Kč", "", price)}', '', name)
         name = re.sub(r', -', ',', name)
+        name = re.sub(r'Malinovka', 'malinovka', name)
         return [(name, price)]
 
     return ('U Cihelny', impl_menicka(5879, func))
