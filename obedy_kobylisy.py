@@ -66,7 +66,13 @@ def default_correction_func(name, price):
     return [(name, price)]
 
 def blekoti():
-    return ('U Blekotů', impl_menicka(2421, default_correction_func))
+    def func(name, price):
+        name = re.sub(r'" +(\S*) +"', lambda m: f'"{m.group(1)}"', name)
+        name = re.sub(r'(")(\S)(\S*)', lambda m: m.group(1) + m.group(2) + m.group(3).lower(), name)
+        name = re.sub(r', -', ',', name)
+        return [(name, price)]
+
+    return ('U Blekotů', impl_menicka(2421, func))
 
 def cihelna():
     def func(name, price):
