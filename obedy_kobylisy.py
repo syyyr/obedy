@@ -40,7 +40,7 @@ def impl_menicka(restaurant_id, correction_func):
         date_tag = menu_tag.find('h2')
         match_date = re.match(r'[^ ]* (\d+)\.(\d+)\.(\d+)', date_tag.text)
         day = date(int(match_date.group(3)), int(match_date.group(2)), int(match_date.group(1)))
-        res[day] = []
+        meals = []
         for meal_tag in menu_tag.find_all('tr'):
             meal_name_tag = meal_tag.find('td', attrs={'class': 'food'})
             meal_name = meal_name_tag.text
@@ -58,7 +58,13 @@ def impl_menicka(restaurant_id, correction_func):
             corrected = correction_func(meal_name, meal_price_tag.text)
 
             for (meal_name_corrected, meal_price_corrected) in corrected:
-                res[day].append({'name': meal_name_corrected, 'price': meal_price_corrected})
+                meals.append({'name': meal_name_corrected, 'price': meal_price_corrected})
+
+        res[day] = []
+        # Remove duplicates
+        for meal in meals:
+            if meal not in res[day]:
+                res[day].append(meal)
 
     return res
 
@@ -80,6 +86,8 @@ def cihelna():
         name = re.sub(r', -', ',', name)
         name = re.sub(r'Malinovka', 'malinovka', name)
         name = re.sub(r'(Polední menu)', r'\1:', name)
+        # Do not shout.
+        name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
 
     return ('U Cihelny', impl_menicka(5879, func))
@@ -95,6 +103,7 @@ def kozlovna():
             ]
 
         name = re.sub(r'Dezert - ', '', name)
+        name = re.sub(r'Bez lepku', '(bez lepku)', name)
         return [(name, price)]
     return ('Kozlovna Almara', impl_menicka(4165, func))
 
@@ -111,6 +120,23 @@ def soucku():
         if match is not None:
             name = re.sub(match.re, '', name)
             price = match.group(1) + ' Kč'
+
+        # Add spaces around plus signs.
+        name = re.sub(r' /$', '', name)
+
+        # Fix typo
+        name = re.sub(r'^Meu', 'Menu', name)
+
+        name = re.sub(r'^Menu (\d)', r'Menu \1:', name)
+
+        # Sometimes, two meals are on the same row.
+        dual_entry_match = re.match(r'(.+) (\d{2,}) (.+)', name)
+        if dual_entry_match is not None:
+            return [
+                (dual_entry_match.group(1), dual_entry_match.group(2) + " Kč"),
+                (dual_entry_match.group(3), price)
+            ]
+
         return [(name, price)]
 
     return ('U Součků', impl_menicka(2457, func))
