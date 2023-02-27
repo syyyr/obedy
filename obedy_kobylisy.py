@@ -45,7 +45,7 @@ def impl_menicka(restaurant_id, correction_func):
             meal_name_tag = meal_tag.find('td', attrs={'class': 'food'})
             meal_name = meal_name_tag.text
             # Sometimes, there are bogus rows.
-            if meal_name in ('Polévka', 'Hlavní jídla:'):
+            if meal_name in ('Polévka', 'Hlavní jídla:', 'Hlavní jídla :', 'Speciality:'):
                 continue
             # Get rid of unnecessary information about the meal.
             meal_name = re.sub(r'\d+g', '', meal_name) # g
