@@ -127,7 +127,7 @@ def soucku():
         # Fix typo
         name = re.sub(r'^Meu', 'Menu', name)
 
-        name = re.sub(r'^Menu (\d)([^:])', r'Menu \1:(\2)', name)
+        name = re.sub(r'^Menu (\d)([^:])', r'Menu \1:\2', name)
 
         # Sometimes, two meals are on the same row.
         dual_entry_match = re.match(r'(.+) (\d{2,}) (.+)', name)
