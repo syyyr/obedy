@@ -179,7 +179,7 @@ def main():
     format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
 
     for (restaurant, (menu_date, menu)) in daily_menus:
-        date_str = menu_date.strftime("%A %d. %B")
+        date_str = menu_date.strftime("%A %e. %B")
         print(f'{BOLD}{restaurant}{NORMAL} {ITALIC}{GREY}{date_str}{NORMAL}')
         header_str = format_string.format("#", "Název", "Cena")
         print(f'{DOUBLE_UNDERLINE}{BLUE}{header_str}{NORMAL}')
