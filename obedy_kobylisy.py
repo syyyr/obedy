@@ -45,7 +45,7 @@ def impl_menicka(restaurant_id, correction_func):
             meal_name_tag = meal_tag.find('td', attrs={'class': 'food'})
             meal_name = meal_name_tag.text
             # Sometimes, there are bogus rows.
-            if meal_name in ('Polévka', 'Hlavní jídla:', 'Hlavní jídla :', 'Speciality:'):
+            if meal_name in ('Polévka', 'Hlavní jídla', 'Hlavní jídla:', 'Hlavní jídla :', 'Speciality:'):
                 continue
             # Get rid of unnecessary information about the meal.
             meal_name = re.sub(r'\d+g', '', meal_name) # g
@@ -128,6 +128,8 @@ def soucku():
         name = re.sub(r'^Meu', 'Menu', name)
 
         name = re.sub(r'^Menu (\d)([^:])', r'Menu \1:\2', name)
+
+        name = re.sub(r'^(\S)', lambda m: m.group(1).upper(), name)
 
         # Sometimes, two meals are on the same row.
         dual_entry_match = re.match(r'(.+) (\d{2,}) (.+)', name)
