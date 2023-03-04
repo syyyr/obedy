@@ -155,6 +155,9 @@ def main():
         weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
     else:
         weekday = date.today().weekday()
+        if weekday > 4:
+            weekday = 0
+            print('O víkendu nejsou obědy. Ukazuji pondělí.')
 
     if weekday is None:
         print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
