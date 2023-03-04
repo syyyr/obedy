@@ -173,6 +173,9 @@ def main(requested_restaurants, weekday):
 
     return 0
 
+def weekday_to_number(weekdayStr):
+    return {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
+
 if __name__ == '__main__':
     if len(sys.argv) >= 2:
         requested_restaurants = [sys.argv[1]]
@@ -182,7 +185,7 @@ if __name__ == '__main__':
     locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
     if len(sys.argv) >= 3:
         weekdayStr = str(sys.argv[2])
-        weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
+        weekday = weekday_to_number(weekdayStr)
     else:
         weekday = date.today().weekday()
         if weekday > 4:
