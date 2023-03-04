@@ -143,26 +143,7 @@ def soucku():
 
     return ('U Součků', impl_menicka(2457, func))
 
-def main():
-    if len(sys.argv) >= 2:
-        requested_restaurants = [sys.argv[1]]
-    else:
-        requested_restaurants = ALL_RESTAURANTS
-
-    locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
-    if len(sys.argv) >= 3:
-        weekdayStr = str(sys.argv[2])
-        weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
-    else:
-        weekday = date.today().weekday()
-        if weekday > 4:
-            weekday = 0
-            print('O víkendu nejsou obědy. Ukazuji pondělí.')
-
-    if weekday is None:
-        print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
-        return 1
-
+def main(requested_restaurants, weekday):
     for restaurant in requested_restaurants:
         if restaurant not in globals():
             print(f'Neznámá restaurace "{restaurant}".')
@@ -193,5 +174,24 @@ def main():
     return 0
 
 if __name__ == '__main__':
-    code = main()
+    if len(sys.argv) >= 2:
+        requested_restaurants = [sys.argv[1]]
+    else:
+        requested_restaurants = ALL_RESTAURANTS
+
+    locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
+    if len(sys.argv) >= 3:
+        weekdayStr = str(sys.argv[2])
+        weekday = {'po': 0, 'út': 1, 'st': 2, 'čt': 3, 'pá': 4, 'ut': 1, 'ct': 3, 'pa': 4}[weekdayStr]
+    else:
+        weekday = date.today().weekday()
+        if weekday > 4:
+            weekday = 0
+            print('O víkendu nejsou obědy. Ukazuji pondělí.')
+
+    if weekday is None:
+        print('Neznámý den: "' + weekdayStr + '". Podporované formáty: Pátek|pá|pa')
+        sys.exit(1)
+
+    code = main(requested_restaurants, weekday)
     sys.exit(code)
