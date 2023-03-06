@@ -18,6 +18,7 @@ BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
 
 requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=60 * 60 * 1) # expire after one hour
+locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
 ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
 
 def resToJson(input_arg):
@@ -184,7 +185,6 @@ if __name__ == '__main__':
     else:
         requested_restaurants = ALL_RESTAURANTS
 
-    locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
     if len(sys.argv) >= 3:
         weekdayStr = str(sys.argv[2])
         weekday = weekday_to_number(weekdayStr)
