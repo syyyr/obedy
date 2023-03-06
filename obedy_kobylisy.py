@@ -31,7 +31,7 @@ def resToJson(input_arg):
     return jsonDump(res)
 
 def impl_menicka(restaurant_id, correction_func):
-    page_content = requests.get(f'https://www.menicka.cz/tisk.php?restaurace={restaurant_id}', timeout=5000).content
+    page_content = requests.get(f'https://www.menicka.cz/tisk.php?restaurace={restaurant_id}', timeout=5000).text
     soup = BeautifulSoup(page_content, 'html.parser')
     all_menus = soup.find_all('div', attrs={'class': 'content'})
     res = OrderedDict()
