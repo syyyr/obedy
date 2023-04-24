@@ -119,6 +119,7 @@ def soucku():
 
         # Add spaces around plus signs.
         name = re.sub(r'(\+)(\S)', r'\1 \2', name)
+        name = re.sub(r'(\S)(\+)', r'\1 \2', name)
 
         # Sometimes, the price is in the meal name.
         match = re.search(r' /(\d+)$', name)
