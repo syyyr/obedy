@@ -78,7 +78,7 @@ def blekoti():
         name = re.sub(r'(")(\S)(\S*)', lambda m: m.group(1) + m.group(2) + m.group(3).lower(), name)
         name = re.sub(r', -', ',', name)
         # Do not shout.
-        name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
+        name = re.sub(r'(\w)(\w*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
 
     return ('U Blekotů', impl_menicka(2421, func))
