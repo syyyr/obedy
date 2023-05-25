@@ -52,7 +52,8 @@ def impl_menicka(restaurant_id, correction_func):
             meal_name = re.sub(r'\d+g', '', meal_name) # g
             meal_name = re.sub(r'\d+ks', '', meal_name) # ks
             meal_name = re.sub(r'\d, \d+l', '', meal_name) # liters of soup
-            meal_name = re.sub(r'^ +', '', meal_name) # leading space
+            meal_name = re.sub(r'^\s+', '', meal_name) # leading space
+            meal_name = re.sub(r'\s+$', '', meal_name) # Trailing space
             meal_name = re.sub(' +', ' ', meal_name) # repeating spaces
 
             meal_price_tag = meal_tag.find('td', attrs={'class': 'prize'})
