@@ -153,7 +153,12 @@ def soucku():
 def main(requested_restaurants, weekday):
     for restaurant in requested_restaurants:
         if restaurant not in globals():
-            print(f'Neznámá restaurace "{restaurant}".')
+            if weekday_to_number(restaurant) is None:
+                print(f'Neznámá restaurace "{restaurant}".')
+                return 1
+
+            requested_restaurants = ALL_RESTAURANTS
+            weekday = weekday_to_number(restaurant)
 
     weekly_menus = [globals()[restaurant]() for restaurant in requested_restaurants if restaurant in globals()]
     daily_menus = [(name, list(weekly_menus.items())[weekday]) for (name, weekly_menus) in weekly_menus]
