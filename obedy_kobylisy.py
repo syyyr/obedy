@@ -17,7 +17,7 @@ GREY = '\u001b[38;5;7m'
 BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
 
-requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=60 * 60 * 1) # expire after one hour
+requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=60 * 30) # expire after 30 minutes
 locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
 ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
 
