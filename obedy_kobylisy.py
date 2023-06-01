@@ -86,7 +86,8 @@ def blekoti():
 
 def cihelna():
     def func(name, price):
-        name = re.sub(f' {re.sub(" Kč", "", price)}', '', name)
+        if price != "":
+            name = re.sub(f' {re.sub(" Kč", "", price)}', '', name)
         name = re.sub(r', -', ',', name)
         name = re.sub(r'Malinovka', 'malinovka', name)
         name = re.sub(r'(Polední menu)', r'\1:', name)
