@@ -58,6 +58,8 @@ def impl_menicka(restaurant_id, correction_func):
 
             meal_price_tag = meal_tag.find('td', attrs={'class': 'prize'})
             corrected = correction_func(meal_name, meal_price_tag.text)
+            if corrected is None:
+                continue
 
             for (meal_name_corrected, meal_price_corrected) in corrected:
                 meals.append({'name': meal_name_corrected, 'price': meal_price_corrected})
@@ -75,6 +77,9 @@ def default_correction_func(name, price):
 
 def blekoti():
     def func(name, price):
+        if name == 'Steaky přímo z venkovního grilu':
+            return None
+
         name = re.sub(r'" +(\S*) +"', lambda m: f'"{m.group(1)}"', name)
         name = re.sub(r'(")(\S)(\S*)', lambda m: m.group(1) + m.group(2) + m.group(3).lower(), name)
         name = re.sub(r', -', ',', name)
