@@ -29,10 +29,12 @@ def resToJson(input_arg):
     for [day, meals] in input_arg[1].items():
         res['menu'].append({'day': str(day), 'meals': meals})
 
+    res['menicka_url'] = input_arg[2]
     return jsonDump(res)
 
 def impl_menicka(restaurant_id, correction_func):
-    page_content = requests.get(f'https://www.menicka.cz/tisk.php?restaurace={restaurant_id}', timeout=5000).text
+    page_url = f'https://www.menicka.cz/tisk.php?restaurace={restaurant_id}'
+    page_content = requests.get(page_url, timeout=5000).text
     soup = BeautifulSoup(page_content, 'html.parser')
     all_menus = soup.find_all('div', attrs={'class': 'content'})
     res = OrderedDict()
@@ -70,7 +72,7 @@ def impl_menicka(restaurant_id, correction_func):
             if meal not in res[day]:
                 res[day].append(meal)
 
-    return res
+    return (res, page_url)
 
 def default_correction_func(name, price):
     return [(name, price)]
@@ -87,7 +89,7 @@ def blekoti():
         name = re.sub(r'(\w)(\w*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
 
-    return ('U Blekotů', impl_menicka(2421, func))
+    return ('U Blekotů',) + impl_menicka(2421, func)
 
 def cihelna():
     def func(name, price):
@@ -102,7 +104,7 @@ def cihelna():
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
 
-    return ('U Cihelny', impl_menicka(5879, func))
+    return ('U Cihelny',) + impl_menicka(5879, func)
 
 def kozlovna():
     def func(name, price):
@@ -117,7 +119,7 @@ def kozlovna():
         name = re.sub(r'Dezert - ', '', name)
         name = re.sub(r'Bez lepku', '(bez lepku)', name)
         return [(name, price)]
-    return ('Kozlovna Almara', impl_menicka(4165, func))
+    return ('Kozlovna Almara',) + impl_menicka(4165, func)
 
 def soucku():
     def func(name, price):
@@ -154,7 +156,7 @@ def soucku():
 
         return [(name, price)]
 
-    return ('U Součků', impl_menicka(2457, func))
+    return ('U Součků',) + impl_menicka(2457, func)
 
 def main(requested_restaurants, weekday):
     for restaurant in requested_restaurants:
@@ -167,12 +169,12 @@ def main(requested_restaurants, weekday):
             weekday = weekday_to_number(restaurant)
 
     weekly_menus = [globals()[restaurant]() for restaurant in requested_restaurants if restaurant in globals()]
-    daily_menus = [(name, list(weekly_menus.items())[weekday]) for (name, weekly_menus) in weekly_menus]
+    daily_menus = [(name, list(weekly_menus.items())[weekday], _) for (name, weekly_menus, _) in weekly_menus]
 
     name_width = 0
     price_width = 0
 
-    for (restaurant, (menu_date, menu)) in daily_menus:
+    for (restaurant, (menu_date, menu), _) in daily_menus:
         longest_meal_name = max(menu, key=lambda it: len(it['name']))['name']
         longest_price_name = max(menu, key=lambda it: len(it['price']))['price']
         name_width = max(len(longest_meal_name), len('Název'), name_width)
@@ -180,7 +182,7 @@ def main(requested_restaurants, weekday):
 
     format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
 
-    for (restaurant, (menu_date, menu)) in daily_menus:
+    for (restaurant, (menu_date, menu), _) in daily_menus:
         date_str = menu_date.strftime("%A %e. %B")
         print(f'{BOLD}{restaurant}{NORMAL} {ITALIC}{GREY}{date_str}{NORMAL}')
         header_str = format_string.format("#", "Název", "Cena")
