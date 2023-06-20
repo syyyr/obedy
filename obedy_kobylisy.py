@@ -29,7 +29,7 @@ def resToJson(input_arg):
     for [day, meals] in input_arg[1].items():
         res['menu'].append({'day': str(day), 'meals': meals})
 
-    res['menicka_url'] = input_arg[2]
+    res['source_url'] = input_arg[2]
     return jsonDump(res)
 
 def impl_menicka(restaurant_id, correction_func):
