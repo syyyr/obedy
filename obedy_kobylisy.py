@@ -123,6 +123,9 @@ def kozlovna():
 
 def soucku():
     def func(name, price):
+        if re.search('vlastních krabiček', name) is not None:
+            return None
+
         # Do not shout.
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
 
