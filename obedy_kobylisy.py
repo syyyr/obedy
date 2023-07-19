@@ -234,7 +234,20 @@ def main(requested_restaurants, weekday):
             header_str = format_string.format("", "", "")
             print(f'{DOUBLE_UNDERLINE}{BLUE}{header_str}{NORMAL}')
             if os.getenv('TERM') == 'xterm-kitty':
-                subprocess.run(['kitten', 'icat', '--align=left'], input=base64.b64decode(menu[0]['screenshot']))
+                i = 0
+                data = menu[0]['screenshot']
+                while data:
+                    chunk, data = data[:4096], data[4096:]
+                    if len(chunk) < 4096:
+                        sys.stdout.write('\u001b_Gm=0;')
+                    elif i == 0:
+                        sys.stdout.write('\u001b_Gm=1,a=T,f=100;')
+                    else:
+                        sys.stdout.write('\u001b_Gm=1;')
+                    sys.stdout.write(chunk)
+                    sys.stdout.write('\u001b\\')
+                    i = i + 1
+                sys.stdout.write('\n')
             continue
 
         header_str = format_string.format("#", "Název", "Cena")
