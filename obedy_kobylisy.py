@@ -115,6 +115,7 @@ def cihelna_screenshot():
     browser.get(CIHELNA_URL)
     table = wait_for_elem(browser, (By.TAG_NAME, 'table'))
     browser.execute_script('arguments[0].scrollIntoView(true);', table)
+    browser.execute_script('arguments[0].setAttribute("cellpadding", "0");', table)
     browser.set_window_size(table.size['width'] * 2, table.size['height'])
     screenshot = browser.get_screenshot_as_base64()
     return (screenshot, CIHELNA_URL)
