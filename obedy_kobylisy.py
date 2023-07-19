@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
+import base64
 import locale
+import os
 import re
+import subprocess
 import sys
 from collections import OrderedDict
 from datetime import date
 from json import dumps as jsonDump
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
 
 import requests_cache
 import requests
@@ -20,6 +29,13 @@ DOUBLE_UNDERLINE = '\u001b[21m'
 requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=60 * 30) # expire after 30 minutes
 locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
 ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
+CIHELNA_URL = 'https://ucihelny.cz'
+
+def wait_for_elem(browser, locator):
+    try:
+        return WebDriverWait(browser, 10).until(EC.presence_of_element_located(locator))
+    except TimeoutException:
+        return None
 
 def resToJson(input_arg):
     res = {}
@@ -91,6 +107,18 @@ def blekoti():
 
     return ('U Blekotů',) + impl_menicka(2421, func)
 
+def cihelna_screenshot():
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--hide-scrollbars')
+    browser = webdriver.Chrome(options=options)
+    browser.get(CIHELNA_URL)
+    table = wait_for_elem(browser, (By.TAG_NAME, 'table'))
+    browser.execute_script('arguments[0].scrollIntoView(true);', table)
+    browser.set_window_size(table.size['width'] * 2, table.size['height'])
+    screenshot = browser.get_screenshot_as_base64()
+    return (screenshot, CIHELNA_URL)
+
 def cihelna():
     def func(name, price):
         if price != "":
@@ -104,7 +132,17 @@ def cihelna():
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
 
-    return ('U Cihelny',) + impl_menicka(5879, func)
+    menicka = impl_menicka(5879, func)
+    if all(len(x) == 1 for x in menicka[1]) == 1:
+        screenshot, source = cihelna_screenshot()
+        menicka_dict = menicka[0]
+        menicka_dict_screenshot = OrderedDict()
+        for k, v in menicka_dict.items():
+            menicka_dict_screenshot[k] = [{'screenshot': screenshot}]
+
+        menicka = (menicka_dict_screenshot, source)
+
+    return ('U Cihelny',) + menicka
 
 def kozlovna():
     def func(name, price):
@@ -178,6 +216,8 @@ def main(requested_restaurants, weekday):
     price_width = 0
 
     for (restaurant, (menu_date, menu), _) in daily_menus:
+        if 'screenshot' in menu[0]:
+            continue
         longest_meal_name = max(menu, key=lambda it: len(it['name']))['name']
         longest_price_name = max(menu, key=lambda it: len(it['price']))['price']
         name_width = max(len(longest_meal_name), len('Název'), name_width)
@@ -188,6 +228,14 @@ def main(requested_restaurants, weekday):
     for (restaurant, (menu_date, menu), _) in daily_menus:
         date_str = menu_date.strftime("%A %e. %B")
         print(f'{BOLD}{restaurant}{NORMAL} {ITALIC}{GREY}{date_str}{NORMAL}')
+
+        if 'screenshot' in menu[0]:
+            header_str = format_string.format("", "", "")
+            print(f'{DOUBLE_UNDERLINE}{BLUE}{header_str}{NORMAL}')
+            if os.getenv('TERM') == 'xterm-kitty':
+                subprocess.run(['kitten', 'icat', '--align=left'], input=base64.b64decode(menu[0]['screenshot']))
+            continue
+
         header_str = format_string.format("#", "Název", "Cena")
         print(f'{DOUBLE_UNDERLINE}{BLUE}{header_str}{NORMAL}')
 
