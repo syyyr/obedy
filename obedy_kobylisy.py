@@ -26,11 +26,12 @@ BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
 
 CACHE_TIMEOUT = 60 * 30
+CACHE_DIR = os.getenv('XDG_CACHE_HOME') if os.getenv('XDG_CACHE_HOME') else os.path.expanduser('~/.cache')
 
-requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=CACHE_TIMEOUT) # expire after 30 minutes
+requests_cache.install_cache(os.path.join(CACHE_DIR, 'obedy_kobylisy/requests'), 'filesystem', serializer='json', expire_after=CACHE_TIMEOUT) # expire after 30 minutes
+SCREENSHOT_CACHE_FILE = os.path.join(CACHE_DIR, 'obedy_kobylisy/screenshot')
 locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
 ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
-SCREENSHOT_CACHE_FILE = os.path.expanduser('~/.cache/obedy_kobylisy_screenshot')
 CIHELNA_URL = 'https://ucihelny.cz'
 
 def wait_for_elem(browser, locator):
