@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-import base64
 import locale
 import os
 import re
-import subprocess
 import sys
 from collections import OrderedDict
 from datetime import date
