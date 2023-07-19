@@ -3,6 +3,7 @@ import locale
 import os
 import re
 import sys
+import time
 from collections import OrderedDict
 from datetime import date
 from json import dumps as jsonDump
@@ -24,9 +25,12 @@ GREY = '\u001b[38;5;7m'
 BLUE = '\u001b[34m'
 DOUBLE_UNDERLINE = '\u001b[21m'
 
-requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=60 * 30) # expire after 30 minutes
+CACHE_TIMEOUT = 60 * 30
+
+requests_cache.install_cache('~/.cache/obedy_kobylisy', 'filesystem', serializer='json', expire_after=CACHE_TIMEOUT) # expire after 30 minutes
 locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
 ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
+SCREENSHOT_CACHE_FILE = os.path.expanduser('~/.cache/obedy_kobylisy_screenshot')
 CIHELNA_URL = 'https://ucihelny.cz'
 
 def wait_for_elem(browser, locator):
@@ -106,6 +110,9 @@ def blekoti():
     return ('U Blekotů',) + impl_menicka(2421, func)
 
 def cihelna_screenshot():
+    if os.path.exists(SCREENSHOT_CACHE_FILE) and os.path.getmtime(SCREENSHOT_CACHE_FILE) + CACHE_TIMEOUT > time.time():
+        with open(SCREENSHOT_CACHE_FILE, mode='r') as f:
+            return (f.read(), CIHELNA_URL)
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--hide-scrollbars')
@@ -116,6 +123,8 @@ def cihelna_screenshot():
     browser.execute_script('arguments[0].setAttribute("cellpadding", "0");', table)
     browser.set_window_size(table.size['width'] * 2, table.size['height'])
     screenshot = browser.get_screenshot_as_base64()
+    with open(SCREENSHOT_CACHE_FILE, mode='w') as f:
+        f.write(screenshot)
     return (screenshot, CIHELNA_URL)
 
 def cihelna():
