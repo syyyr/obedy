@@ -142,7 +142,7 @@ def cihelna():
         return [(name, price)]
 
     menicka = impl_menicka(5879, func)
-    if all(len(x) == 1 for x in menicka[1]) == 1:
+    if all(len(meals) == 1 for _, meals in menicka[0].items()):
         screenshot, source = cihelna_screenshot()
         menicka_dict = menicka[0]
         menicka_dict_screenshot = OrderedDict()
