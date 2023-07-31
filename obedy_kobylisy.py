@@ -71,7 +71,7 @@ def impl_menicka(restaurant_id, correction_func):
                 continue
             # Get rid of unnecessary information about the meal.
             meal_name = re.sub(r'\d+g', '', meal_name) # g
-            meal_name = re.sub(r'\d ?+ks', '', meal_name) # ks
+            meal_name = re.sub(r'\d+ ?ks', '', meal_name) # ks
             meal_name = re.sub(r'\d, \d+l', '', meal_name) # liters of soup
             meal_name = re.sub(r'^\s+', '', meal_name) # leading space
             meal_name = re.sub(r'\s+$', '', meal_name) # Trailing space
