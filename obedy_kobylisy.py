@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
+import base64
 import locale
 import os
+from PIL import Image
 import re
 import sys
 import time
 from collections import OrderedDict
-from datetime import date
+from datetime import date, timedelta
+from io import BytesIO
 from json import dumps as jsonDump
 
 from selenium import webdriver
@@ -29,10 +32,12 @@ CACHE_TIMEOUT = 60 * 30
 CACHE_DIR = os.getenv('XDG_CACHE_HOME') if os.getenv('XDG_CACHE_HOME') else os.path.expanduser('~/.cache')
 
 requests_cache.install_cache(os.path.join(CACHE_DIR, 'obedy_kobylisy/requests'), 'filesystem', serializer='json', expire_after=CACHE_TIMEOUT) # expire after 30 minutes
-SCREENSHOT_CACHE_FILE = os.path.join(CACHE_DIR, 'obedy_kobylisy/screenshot')
+SCREENSHOT_CACHE_FILE_CIHELNA = os.path.join(CACHE_DIR, 'obedy_kobylisy/screenshot_cihelna')
+SCREENSHOT_CACHE_FILE_VYHLIDKA = os.path.join(CACHE_DIR, 'obedy_kobylisy/screenshot_vyhlidka')
 locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
-ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku']
+ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku', 'vyhlidka']
 CIHELNA_URL = 'https://ucihelny.cz'
+VYHLIDKA_URL = 'https://steakyzlatavyhlidka.cz/'
 
 def wait_for_elem(browser, locator):
     try:
@@ -111,8 +116,8 @@ def blekoti():
     return ('U Blekotů',) + impl_menicka(2421, func)
 
 def cihelna_screenshot():
-    if os.path.exists(SCREENSHOT_CACHE_FILE) and os.path.getmtime(SCREENSHOT_CACHE_FILE) + CACHE_TIMEOUT > time.time():
-        with open(SCREENSHOT_CACHE_FILE, mode='r') as f:
+    if os.path.exists(SCREENSHOT_CACHE_FILE_CIHELNA) and os.path.getmtime(SCREENSHOT_CACHE_FILE_CIHELNA) + CACHE_TIMEOUT > time.time():
+        with open(SCREENSHOT_CACHE_FILE_CIHELNA, mode='r') as f:
             return (f.read(), CIHELNA_URL)
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
@@ -124,7 +129,7 @@ def cihelna_screenshot():
     browser.set_window_size(table.size['width'] * 2, table.size['height'])
     browser.execute_script('arguments[0].scrollIntoView(true);', table)
     screenshot = browser.get_screenshot_as_base64()
-    with open(SCREENSHOT_CACHE_FILE, mode='w') as f:
+    with open(SCREENSHOT_CACHE_FILE_CIHELNA, mode='w') as f:
         f.write(screenshot)
     return (screenshot, CIHELNA_URL)
 
@@ -207,6 +212,39 @@ def soucku():
         return [(name, price)]
 
     return ('U Součků',) + impl_menicka(2457, func)
+
+def vyhlidka_screenshot():
+    if os.path.exists(SCREENSHOT_CACHE_FILE_VYHLIDKA) and os.path.getmtime(SCREENSHOT_CACHE_FILE_VYHLIDKA) + CACHE_TIMEOUT > time.time():
+        with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='r') as f:
+            return (f.read(), VYHLIDKA_URL)
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--hide-scrollbars')
+    browser = webdriver.Chrome(options=options)
+    browser.get(VYHLIDKA_URL)
+    pic_container = wait_for_elem(browser, (By.TAG_NAME, 'ws-media-container'))
+    img_url = pic_container.get_attribute('origin-src')
+    response = requests.get(VYHLIDKA_URL + img_url, timeout=5000)
+    webp = Image.open(BytesIO(response.content))
+    width, height = webp.size
+    webp = webp.resize((int(width * 0.75), int(height * 0.75)))
+    png = BytesIO()
+    webp.save(png, "png")
+    screenshot = base64.b64encode(png.getvalue()).decode('utf-8')
+    with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='w') as f:
+        f.write(screenshot)
+    return (screenshot, CIHELNA_URL)
+
+def vyhlidka():
+    screenshot, source = vyhlidka_screenshot()
+    menicka = OrderedDict()
+    monday = date.today() - timedelta(days=date.today().weekday())
+    for k in [monday + timedelta(days=i) for i in range(5)]:
+        menicka[k] = [{'screenshot': screenshot}]
+
+    menicka = (menicka, source)
+
+    return ('Steaky na Zlaté vyhlídce',) + menicka
 
 def main(requested_restaurants, weekday):
     for restaurant in requested_restaurants:
