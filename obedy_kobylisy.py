@@ -233,7 +233,7 @@ def vyhlidka_screenshot():
     screenshot = base64.b64encode(png.getvalue()).decode('utf-8')
     with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='w') as f:
         f.write(screenshot)
-    return (screenshot, CIHELNA_URL)
+    return (screenshot, VYHLIDKA_URL)
 
 def vyhlidka():
     screenshot, source = vyhlidka_screenshot()
