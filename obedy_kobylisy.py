@@ -135,8 +135,20 @@ def cihelna_screenshot():
 
 def cihelna():
     def func(name, price):
+        if name == 'dcl Malinovka':
+            name = '2 dcl malinovka'
+
+        if func.menu_save is not None:
+            name = f'{func.menu_save} {name}'
+            func.menu_save = None
         if price != "":
             name = re.sub(f' {re.sub(" Kč", "", price)}', '', name)
+
+        # Daily menu is sometimes on two rows
+        if 'Polední menu' in name and price == '':
+            func.menu_save = name
+            return None
+
         name = re.sub(r', -', ',', name)
         name = re.sub(r'Malinovka', 'malinovka', name)
         name = re.sub(r'(Polední menu)', r'\1:', name)
@@ -145,6 +157,8 @@ def cihelna():
         # Do not shout.
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
+
+    func.menu_save = None
 
     menicka = impl_menicka(5879, func)
     if all(len(meals) == 1 for _, meals in menicka[0].items()):
