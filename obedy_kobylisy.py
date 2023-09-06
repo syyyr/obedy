@@ -23,6 +23,9 @@ from bs4 import BeautifulSoup
 
 NORMAL = '\u001b[0m'
 BOLD = '\u001b[1m'
+URL_START = '\u001b]8;;'
+URL_SEP = '\u001b\\'
+URL_END = '\u001b]8;;\u001b\\'
 ITALIC = '\u001b[3m'
 GREY = '\u001b[38;5;7m'
 BLUE = '\u001b[34m'
@@ -278,9 +281,9 @@ def main(requested_restaurants, weekday):
 
     format_string = '{:3}' + f'{{:{name_width + 1}}} {{:>{price_width + 1}}}'
 
-    for (restaurant, (menu_date, menu), _) in daily_menus:
+    for (restaurant, (menu_date, menu), url) in daily_menus:
         date_str = menu_date.strftime("%A %e. %B")
-        print(f'{BOLD}{restaurant}{NORMAL} {ITALIC}{GREY}{date_str}{NORMAL}')
+        print(f'{BOLD}{URL_START}{url}{URL_SEP}{restaurant}{URL_END}{NORMAL} {ITALIC}{GREY}{date_str}{NORMAL}')
 
         if 'screenshot' in menu[0]:
             header_str = format_string.format("", "", "")
