@@ -157,6 +157,13 @@ def cihelna():
         name = re.sub(r'(Polední menu)-? ?', r'\1: ', name)
         name = re.sub(r'([^ ])"(.+)"', r'\1 "\2"', name)
         name = re.sub(r'"(.+)"([^ ,])', r'"\1" \2', name)
+        name = re.sub(r'housk\.', r'houskový', name)
+        name = re.sub(r'kn\.', r'knedlík', name)
+        name = re.sub(r'b\. k\.', r'bez kosti', name)
+        name = re.sub(r'om\.', r'omáčka', name)
+        name = re.sub(r'tat\.', r'tatarská', name)
+        name = re.sub(r'opeč\.', r'opečený', name)
+        name = re.sub(r'br\.', r'bramborová', name)
         # Do not shout.
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
