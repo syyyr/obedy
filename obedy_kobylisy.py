@@ -2,7 +2,6 @@
 import base64
 import locale
 import os
-from PIL import Image, ImageOps
 import re
 import sys
 import time
@@ -10,6 +9,7 @@ from collections import OrderedDict
 from datetime import date, timedelta
 from io import BytesIO
 from json import dumps as jsonDump
+from PIL import Image, ImageOps
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
