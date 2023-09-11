@@ -2,7 +2,7 @@
 import base64
 import locale
 import os
-from PIL import Image
+from PIL import Image, ImageOps
 import re
 import sys
 import time
@@ -237,28 +237,41 @@ def soucku():
 
     return ('U Součků',) + impl_menicka(2457, func)
 
+def vyhlidka_screenshot():
+    if os.path.exists(SCREENSHOT_CACHE_FILE_VYHLIDKA) and os.path.getmtime(SCREENSHOT_CACHE_FILE_VYHLIDKA) + CACHE_TIMEOUT > time.time():
+        with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='r') as f:
+            return (f.read(), VYHLIDKA_URL)
+    page_content = requests.get(VYHLIDKA_URL, timeout=5000).text
+    soup = BeautifulSoup(page_content, 'html.parser')
+    source = soup.find('source', {'srcset': re.compile(r'/ws/media-library/d95cc629c22e40d8a130923e440f55b3/jidelni-listek-.+.webp')})
+    img_url = f'{VYHLIDKA_URL}{source["srcset"]}'
+    response = requests.get(img_url, timeout=5000)
+
+    # Crop white border
+    webp = Image.open(BytesIO(response.content))
+    invert_im = webp.convert("RGB")
+    invert_im = ImageOps.invert(webp)
+    x0, y0, x1, y1 = invert_im.getbbox()
+    webp = webp.crop((x0, y0 + 275, x1, y1))
+
+    width, height = webp.size
+    webp = webp.resize((int(width * 0.75), int(height * 0.75)))
+
+    png = BytesIO()
+    webp.save(png, "png")
+    screenshot = base64.b64encode(png.getvalue()).decode('utf-8')
+    with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='w') as f:
+        f.write(screenshot)
+    return (screenshot, VYHLIDKA_URL)
+
 def vyhlidka():
+    screenshot, source = vyhlidka_screenshot()
     menicka = OrderedDict()
     monday = date.today() - timedelta(days=date.today().weekday())
     for k in [monday + timedelta(days=i) for i in range(5)]:
-        menicka[k] = [
-            {'name': 'Vyhlídka má každej den stejný polední menu.', 'price': ''},
-            {'name': 'Hovězí vývar s masem a nudlemi', 'price': '39 Kč'},
-            {'name': 'Polévka dle denní nabídky', 'price': '39 Kč'},
-            {'name': 'Hovězí maso zadní, vařený brambor, tatarská omáčka', 'price': '148 Kč'},
-            {'name': 'Svíčková na smetaně, houskový knedlík, brusinkový terč', 'price': '148 Kč'},
-            {'name': 'Rajská hovězí pečeně, houskový knedlík', 'price': '148 Kč'},
-            {'name': 'Hovězí guláš, houskový knedlík', 'price': '148 Kč'},
-            {'name': 'Znojemská vepřová plec, dušená rýže', 'price': '138 Kč'},
-            {'name': 'Vepřová plec po selsku, bramborový knedlík, hlávkové zelí', 'price': '148 Kč'},
-            {'name': 'Srbské rizoto sypané sýrem, okurka', 'price': '128 Kč'},
-            {'name': 'Smažený vepřový řízek, vařený brambor, citron', 'price': '158 Kč'},
-            {'name': 'Smažený kuřecí řízek, bramborový salát, citron', 'price': '158 Kč'},
-            {'name': 'Smažený sýr, hranolky, tatarská omáčka', 'price': '158 Kč'},
-            {'name': 'Smažený květák, vařený brambor, tatarská omáčka', 'price': '158 Kč'},
-        ]
+        menicka[k] = [{'screenshot': screenshot}]
 
-    menicka = (menicka, VYHLIDKA_URL)
+    menicka = (menicka, source)
 
     return ('Steaky na Zlaté vyhlídce',) + menicka
 
