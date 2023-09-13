@@ -252,7 +252,7 @@ def vyhlidka_screenshot():
     invert_im = webp.convert("RGB")
     invert_im = ImageOps.invert(webp)
     x0, y0, x1, y1 = invert_im.getbbox()
-    webp = webp.crop((x0, y0 + 275, x1, y1))
+    webp = webp.crop((x0 + 30, y0 + 275, x1 - 15, y1))
 
     width, height = webp.size
     webp = webp.resize((int(width * 0.75), int(height * 0.75)))
