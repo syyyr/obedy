@@ -243,7 +243,7 @@ def vyhlidka_screenshot():
             return (f.read(), VYHLIDKA_URL)
     page_content = requests.get(VYHLIDKA_URL, timeout=5000).text
     soup = BeautifulSoup(page_content, 'html.parser')
-    source = soup.find('source', {'srcset': re.compile(r'/ws/media-library/[a-z0-9]+/jidelni-listek-.+.webp')})
+    source = soup.find('source', {'srcset': re.compile(r'/ws/media-library/[a-z0-9]+/(jidelni-listek-)?.+.webp')})
     img_url = f'{VYHLIDKA_URL}{source["srcset"]}'
     response = requests.get(img_url, timeout=5000)
 
