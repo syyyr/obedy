@@ -208,6 +208,12 @@ def soucku():
         # Add spaces around plus signs.
         name = re.sub(r'(\+)(\S)', r'\1 \2', name)
         name = re.sub(r'(\S)(\+)', r'\1 \2', name)
+        name = re.sub(r'br\.', r'bramborová', name)
+        name = re.sub(r'led\. salát', r'ledový salát', name)
+        name = re.sub(r'dom\.', r'domácí', name)
+        name = re.sub(r'vař.\.', r'vařený', name)
+        name = re.sub(r'vepř.\.', r'vepřový', name)
+        name = re.sub(r'gril\. (.* prso)', r'grilované \1 prso', name)
 
         # Sometimes, the price is in the meal name.
         match = re.search(r' /(\d+)$', name)
