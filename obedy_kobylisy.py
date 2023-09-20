@@ -80,7 +80,7 @@ def impl_menicka(restaurant_id, correction_func):
             # Get rid of unnecessary information about the meal.
             meal_name = re.sub(r'\d+g', '', meal_name) # g
             meal_name = re.sub(r'\d+ ?ks', '', meal_name) # ks
-            meal_name = re.sub(r'\d, \d+l', '', meal_name) # liters of soup
+            meal_name = re.sub(r'\d, \d+l?', '', meal_name) # liters of soup
             meal_name = re.sub(r'^\s+', '', meal_name) # leading space
             meal_name = re.sub(r'\s+$', '', meal_name) # Trailing space
             meal_name = re.sub(' +', ' ', meal_name) # repeating spaces
@@ -210,9 +210,10 @@ def soucku():
         name = re.sub(r'(\S)(\+)', r'\1 \2', name)
         name = re.sub(r'br\.', r'bramborová', name)
         name = re.sub(r'led\. salát', r'ledový salát', name)
+        name = re.sub(r'Slaát', r'salát', name)
         name = re.sub(r'dom\.', r'domácí', name)
         name = re.sub(r'vař.\.', r'vařený', name)
-        name = re.sub(r'vepř.\.', r'vepřový', name)
+        name = re.sub(r'vepř\.', r'vepřový', name)
         name = re.sub(r'gril\. (.* prso)', r'grilované \1 prso', name)
 
         # Sometimes, the price is in the meal name.
