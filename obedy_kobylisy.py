@@ -109,6 +109,7 @@ def blekoti():
         if name in ('Steaky přímo z grilu', 'Steaky přímo z venkovního grilu'):
             return None
 
+        name = re.sub(r'HK', 'houskový knedlík', name)
         name = re.sub(r'" +(\S*) +"', lambda m: f'"{m.group(1)}"', name)
         name = re.sub(r'(")(\S)(\S*)', lambda m: m.group(1) + m.group(2) + m.group(3).lower(), name)
         name = re.sub(r', -', ',', name)
@@ -212,7 +213,8 @@ def soucku():
         name = re.sub(r'led\. salát', r'ledový salát', name)
         name = re.sub(r'Slaát', r'salát', name)
         name = re.sub(r'dom\.', r'domácí', name)
-        name = re.sub(r'vař.\.', r'vařený', name)
+        name = re.sub(r'vař\.', r'vařený', name)
+        name = re.sub(r'olom\.', r'olomoucký', name)
         name = re.sub(r'vepř\.', r'vepřový', name)
         name = re.sub(r'gril\. (.* prso)', r'grilované \1 prso', name)
 
