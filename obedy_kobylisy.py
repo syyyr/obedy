@@ -247,14 +247,20 @@ def soucku():
     return ('U Součků',) + impl_menicka(2457, func)
 
 def vyhlidka_screenshot():
-    if os.path.exists(SCREENSHOT_CACHE_FILE_VYHLIDKA) and os.path.getmtime(SCREENSHOT_CACHE_FILE_VYHLIDKA) + CACHE_TIMEOUT > time.time():
-        with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='r') as f:
-            return (f.read(), VYHLIDKA_URL)
     page_content = requests.get(VYHLIDKA_URL, timeout=5000).text
     soup = BeautifulSoup(page_content, 'html.parser')
     source = soup.find('source', {'srcset': re.compile(r'/ws/media-library/[a-z0-9]+/(jidelni-listek-)?.+.webp')})
     img_url = f'{VYHLIDKA_URL}{source["srcset"]}'
     response = requests.get(img_url, timeout=5000)
+
+    match_date = re.match(r'.*(\d+)\.(\d+)\.(\d+)\.webp', source["srcset"])
+    if match_date  is not None:
+        day = date(int(match_date.group(3)) + 2000, int(match_date.group(2)), int(match_date.group(1)))
+    else:
+        day = None
+    if os.path.exists(SCREENSHOT_CACHE_FILE_VYHLIDKA) and os.path.getmtime(SCREENSHOT_CACHE_FILE_VYHLIDKA) + CACHE_TIMEOUT > time.time():
+        with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='r') as f:
+            return (f.read(), VYHLIDKA_URL, day)
 
     # Crop white border
     webp = Image.open(BytesIO(response.content))
@@ -271,14 +277,17 @@ def vyhlidka_screenshot():
     screenshot = base64.b64encode(png.getvalue()).decode('utf-8')
     with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='w') as f:
         f.write(screenshot)
-    return (screenshot, VYHLIDKA_URL)
+    return (screenshot, VYHLIDKA_URL, day)
 
 def vyhlidka():
-    screenshot, source = vyhlidka_screenshot()
+    screenshot, source, day = vyhlidka_screenshot()
     menicka = OrderedDict()
     monday = date.today() - timedelta(days=date.today().weekday())
     for k in [monday + timedelta(days=i) for i in range(5)]:
-        menicka[k] = [{'screenshot': screenshot}]
+        if day == k or day is None:
+            menicka[k] = [{'screenshot': screenshot}]
+        else:
+            menicka[k] = [{'name': 'Pro tento den nebylo zadáno menu.', 'price': ''}]
 
     menicka = (menicka, source)
 
