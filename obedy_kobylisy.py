@@ -155,7 +155,7 @@ def cihelna():
 
         name = re.sub(r', -', ',', name)
         name = re.sub(r'Malinovka', 'malinovka', name)
-        name = re.sub(r'(Polední menu)-? ?', r'\1: ', name)
+        name = re.sub(r'(Polední menu)-? ?[^:]', r'\1: ', name)
         name = re.sub(r'([^ ])"(.+)"', r'\1 "\2"', name)
         name = re.sub(r'"(.+)"([^ ,])', r'"\1" \2', name)
         name = re.sub(r'housk\.', r'houskový', name)
