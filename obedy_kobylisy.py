@@ -253,7 +253,7 @@ def vyhlidka_screenshot():
     img_url = f'{VYHLIDKA_URL}{source["srcset"]}'
     response = requests.get(img_url, timeout=5000)
 
-    match_date = re.match(r'[0-9]*(\d+)\.(\d+)\.(\d+)\.webp', source["srcset"])
+    match_date = re.search(r'[^0-9]+(\d+)\.(\d+)\.(\d+)\.webp', source["srcset"])
     if match_date is not None:
         day = date(int(match_date.group(3)) + 2000, int(match_date.group(2)), int(match_date.group(1)))
     else:
