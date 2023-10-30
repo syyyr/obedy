@@ -89,7 +89,8 @@ def impl_menicka(restaurant_id, correction_func):
                 'Saláty',
                 'Specialita zahradnického centra',
                 'Šéfkuchař doporučuje',
-                'Bezmasá jídla'
+                'Bezmasá jídla',
+                'Gril'
             ):
                 continue
             # Get rid of unnecessary information about the meal.
