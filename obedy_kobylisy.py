@@ -228,7 +228,7 @@ def soucku():
         # Add spaces around plus signs.
         name = re.sub(r'(\+)(\S)', r'\1 \2', name)
         name = re.sub(r'(\S)(\+)', r'\1 \2', name)
-        name = re.sub(r'br\.', r'bramborová', name)
+        name = re.sub(r'br\. knedlík', r'bramborový knedlík', name)
         name = re.sub(r'led\. salát', r'ledový salát', name)
         name = re.sub(r'Slaát', r'salát', name)
         name = re.sub(r'dom\.', r'domácí', name)
