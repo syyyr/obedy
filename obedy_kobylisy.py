@@ -172,7 +172,8 @@ def cihelna():
 
         name = re.sub(r', -', ',', name)
         name = re.sub(r'Malinovka', 'malinovka', name)
-        name = re.sub(r'(Polední menu)-? ?[^:]', r'\1: ', name)
+        name = re.sub(r'Předkrm ', '', name)
+        name = re.sub(r'(Polední menu)-? ?([^:])', r'\1: \2', name)
         name = re.sub(r'([^ ])"(.+)"', r'\1 "\2"', name)
         name = re.sub(r'"(.+)"([^ ,])', r'"\1" \2', name)
         name = re.sub(r'housk\.', r'houskový', name)
@@ -205,7 +206,7 @@ def cihelna():
 def kozlovna():
     def func(name, price):
         # Sometimes, the salad is on the same row.
-        dual_entry_match = re.match(r'(.+) (\d+), - (.+)', name)
+        dual_entry_match = re.match(r'(.+) (\d+),? ?-? ?(.+)', name)
         if dual_entry_match is not None:
             return [
                 (dual_entry_match.group(1), dual_entry_match.group(2) + " Kč"),
@@ -229,6 +230,7 @@ def soucku():
         name = re.sub(r'(\+)(\S)', r'\1 \2', name)
         name = re.sub(r'(\S)(\+)', r'\1 \2', name)
         name = re.sub(r'br\. knedlík', r'bramborový knedlík', name)
+        name = re.sub(r'br\. kaše', r'bramborová kaše', name)
         name = re.sub(r'led\. salát', r'ledový salát', name)
         name = re.sub(r'Slaát', r'salát', name)
         name = re.sub(r'dom\.', r'domácí', name)
