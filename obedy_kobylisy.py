@@ -243,10 +243,10 @@ def soucku():
         name = re.sub(r'trh\. kachním', r'červená cibule', name)
 
         # Sometimes, the price is in the meal name.
-        match = re.search(r' /(\d+)$', name)
+        match = re.search(r' /(\d+)$|(\d+), -kč$', name)
         if match is not None:
             name = re.sub(match.re, '', name)
-            price = match.group(1) + ' Kč'
+            price = match.group(1) or match.group(2) + ' Kč'
 
         # Add spaces around plus signs.
         name = re.sub(r' /$', '', name)
