@@ -95,7 +95,7 @@ def impl_menicka(restaurant_id, correction_func):
             ):
                 continue
             # Get rid of unnecessary information about the meal.
-            meal_name = re.sub(r'(\d+-)?\d+g', '', meal_name) # g
+            meal_name = re.sub(r'(\d+-)?\d+ ?g', '', meal_name) # g
             meal_name = re.sub(r'\d+ ?ks', '', meal_name) # ks
             meal_name = re.sub(r'\d, ?\d+l?', '', meal_name) # liters of soup
             meal_name = re.sub(r'^\s+', '', meal_name) # leading space
@@ -214,6 +214,7 @@ def kozlovna():
             ]
 
         name = re.sub(r'Dezert - ', '', name)
+        name = re.sub(r'kus-kus', 'kuskus', name)
         name = re.sub(r'Bez lepku', '(bez lepku)', name)
         return [(name, price)]
     return ('Kozlovna Almara',) + impl_menicka(4165, func)
