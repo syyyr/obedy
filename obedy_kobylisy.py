@@ -136,24 +136,6 @@ def blekoti():
 
     return ('U Blekotů',) + impl_menicka(2421, func)
 
-def cihelna_screenshot():
-    if os.path.exists(SCREENSHOT_CACHE_FILE_CIHELNA) and os.path.getmtime(SCREENSHOT_CACHE_FILE_CIHELNA) + CACHE_TIMEOUT > time.time():
-        with open(SCREENSHOT_CACHE_FILE_CIHELNA, mode='r') as f:
-            return (f.read(), CIHELNA_URL)
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--hide-scrollbars')
-    browser = webdriver.Chrome(options=options)
-    browser.get(CIHELNA_URL)
-    table = wait_for_elem(browser, (By.TAG_NAME, 'table'))
-    browser.execute_script('arguments[0].setAttribute("cellpadding", "0");', table)
-    browser.set_window_size(table.size['width'] * 2, table.size['height'])
-    browser.execute_script('arguments[0].scrollIntoView(true);', table)
-    screenshot = browser.get_screenshot_as_base64()
-    with open(SCREENSHOT_CACHE_FILE_CIHELNA, mode='w') as f:
-        f.write(screenshot)
-    return (screenshot, CIHELNA_URL)
-
 def cihelna():
     def func(name, price):
         if name == 'dcl Malinovka':
@@ -192,15 +174,6 @@ def cihelna():
     func.menu_save = None
 
     menicka = impl_menicka(5879, func)
-    if all(len(meals) == 1 for _, meals in menicka[0].items()):
-        screenshot, source = cihelna_screenshot()
-        menicka_dict = menicka[0]
-        menicka_dict_screenshot = OrderedDict()
-        for k, v in menicka_dict.items():
-            menicka_dict_screenshot[k] = [{'screenshot': screenshot}]
-
-        menicka = (menicka_dict_screenshot, source)
-
     return ('U Cihelny',) + menicka
 
 def kozlovna():
