@@ -104,7 +104,7 @@ def impl_menicka(restaurant_id, correction_func):
 
             meal_price_tag = meal_tag.find('td', attrs={'class': 'prize'})
             corrected = correction_func(meal_name, meal_price_tag.text)
-            if corrected is None:
+            if corrected is None or corrected[0][0] == '':
                 continue
 
             for (meal_name_corrected, meal_price_corrected) in corrected:
