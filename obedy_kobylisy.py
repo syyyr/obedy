@@ -167,6 +167,7 @@ def cihelna():
         name = re.sub(r'br\.', r'bramborová', name)
         name = re.sub(r'uz\.', r'uzeným', name)
         name = re.sub(r'smet-', r'smetanovo-', name)
+        name = re.sub(r'červ\. zelí', r'červené zelí', name)
         # Do not shout.
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
@@ -218,6 +219,7 @@ def soucku():
         name = re.sub(r'trh\. kachním', r'trhaným kachním', name)
         name = re.sub(r'uz\. krkovička', r'uzená krkovička', name)
         name = re.sub(r'kuř\. maso', r'kuřecí maso', name)
+        name = re.sub(r'gril\. hermelín', r'grilovaný hermelín', name)
 
         # Sometimes, the price is in the meal name.
         match = re.search(r' /(\d+)$|(\d+), -kč$', name)
