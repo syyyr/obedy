@@ -168,6 +168,8 @@ def cihelna():
         name = re.sub(r'uz\.', r'uzeným', name)
         name = re.sub(r'smet-', r'smetanovo-', name)
         name = re.sub(r'červ\. zelí', r'červené zelí', name)
+        name = re.sub(r'tatar\. omáčka', r'tatarská omáčka', name)
+
         # Do not shout.
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
