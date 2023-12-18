@@ -217,6 +217,7 @@ def soucku():
         name = re.sub(r'červ\. cibule', r'červená cibule', name)
         name = re.sub(r'trh\. kachním', r'trhaným kachním', name)
         name = re.sub(r'uz\. krkovička', r'uzená krkovička', name)
+        name = re.sub(r'kuř\. maso', r'kuřecí maso', name)
 
         # Sometimes, the price is in the meal name.
         match = re.search(r' /(\d+)$|(\d+), -kč$', name)
