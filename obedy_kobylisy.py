@@ -96,7 +96,7 @@ def impl_menicka(restaurant_id, correction_func):
                 continue
             # Get rid of unnecessary information about the meal.
             meal_name = re.sub(r'(\d+-)?\d+ ?g', '', meal_name) # g
-            meal_name = re.sub(r'\d+ ?ks', '', meal_name) # ks
+            meal_name = re.sub(r'\(?\d+ ?ks\)?', '', meal_name) # ks
             meal_name = re.sub(r'\d, ?\d+l?', '', meal_name) # liters of soup
             meal_name = re.sub(r'^\s+', '', meal_name) # leading space
             meal_name = re.sub(r'\s+$', '', meal_name) # Trailing space
@@ -169,6 +169,7 @@ def cihelna():
         name = re.sub(r'smet-', r'smetanovo-', name)
         name = re.sub(r'červ\. zelí', r'červené zelí', name)
         name = re.sub(r'tatar\. omáčka', r'tatarská omáčka', name)
+        name = re.sub(r'cibul\. kroužky', r'cibulové kroužky', name)
 
         # Do not shout.
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
@@ -222,6 +223,7 @@ def soucku():
         name = re.sub(r'uz\. krkovička', r'uzená krkovička', name)
         name = re.sub(r'kuř\. maso', r'kuřecí maso', name)
         name = re.sub(r'gril\. hermelín', r'grilovaný hermelín', name)
+        name = re.sub(r'/$', r'', name)
 
         # Sometimes, the price is in the meal name.
         match = re.search(r' /(\d+)$|(\d+), -kč$', name)
