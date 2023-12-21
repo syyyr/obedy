@@ -126,6 +126,15 @@ def blekoti():
         if name in ('Steaky přímo z grilu', 'Steaky přímo z venkovního grilu'):
             return None
 
+        if func.menu_save is not None:
+            name = f'{func.menu_save} {name}'
+            func.menu_save = None
+
+        # Meal is sometimes on two rows
+        if price == '':
+            func.menu_save = name
+            return None
+
         name = re.sub(r'HK', 'houskový knedlík', name)
         name = re.sub(r'" +(\S*) +"', lambda m: f'"{m.group(1)}"', name)
         name = re.sub(r'(")(\S)(\S*)', lambda m: m.group(1) + m.group(2) + m.group(3).lower(), name)
@@ -133,6 +142,8 @@ def blekoti():
         # Do not shout.
         name = re.sub(r'(\w)(\w*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
+
+    func.menu_save = None
 
     return ('U Blekotů',) + impl_menicka(2421, func)
 
