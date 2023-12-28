@@ -330,7 +330,7 @@ def main(requested_restaurants, weekday):
     price_width = 0
 
     for (restaurant, (menu_date, menu), _) in daily_menus:
-        if 'screenshot' in menu[0]:
+        if len(menu) == 0 or 'screenshot' in menu[0]:
             continue
         longest_meal_name = max(menu, key=lambda it: len(it['name']))['name']
         longest_price_name = max(menu, key=lambda it: len(it['price']))['price']
@@ -343,7 +343,7 @@ def main(requested_restaurants, weekday):
         date_str = menu_date.strftime("%A %e. %B")
         print(f'{BOLD}{URL_START}{url}{URL_SEP}{restaurant}{URL_END}{NORMAL} {ITALIC}{GREY}{date_str}{NORMAL}')
 
-        if 'screenshot' in menu[0]:
+        if len(menu) != 0 and 'screenshot' in menu[0]:
             header_str = format_string.format("", "", "")
             print(f'{DOUBLE_UNDERLINE}{BLUE}{header_str}{NORMAL}')
             if os.getenv('TERM') == 'xterm-kitty':
