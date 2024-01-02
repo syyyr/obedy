@@ -158,6 +158,12 @@ def cihelna():
         if price != "":
             name = re.sub(f' {re.sub(" Kč", "", price)}', '', name)
 
+        # Sometimes, the price is in the meal name.
+        match = re.search(r' (\d+) Kč$', name)
+        if match is not None:
+            name = re.sub(match.re, '', name)
+            price = match.group(1) + ' Kč'
+
         # Daily menu is sometimes on two rows
         if 'Polední menu' in name and price == '':
             func.menu_save = name
