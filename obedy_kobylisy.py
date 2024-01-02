@@ -187,6 +187,8 @@ def cihelna():
         name = re.sub(r'červ\. zelí', r'červené zelí', name)
         name = re.sub(r'tatar\. omáčka', r'tatarská omáčka', name)
         name = re.sub(r'cibul\. kroužky', r'cibulové kroužky', name)
+        name = re.sub(r'angl\. slaninou', r'anglickou slaninou', name)
+        name = re.sub(r'bram\. kaše', r'bramborová kaše', name)
 
         # Do not shout.
         name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
