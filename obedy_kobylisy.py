@@ -38,7 +38,7 @@ requests_cache.install_cache(os.path.join(CACHE_DIR, 'obedy_kobylisy/requests'),
 SCREENSHOT_CACHE_FILE_CIHELNA = os.path.join(CACHE_DIR, 'obedy_kobylisy/screenshot_cihelna')
 SCREENSHOT_CACHE_FILE_VYHLIDKA = os.path.join(CACHE_DIR, 'obedy_kobylisy/screenshot_vyhlidka')
 locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
-ALL_RESTAURANTS = ['blekoti', 'cihelna', 'kozlovna', 'soucku', 'vyhlidka']
+ALL_RESTAURANTS = ['blekoti', 'kozlovna', 'cihelna', 'soucku', 'vyhlidka']
 CIHELNA_URL = 'https://ucihelny.cz'
 VYHLIDKA_URL = 'https://steakyzlatavyhlidka.cz/'
 
