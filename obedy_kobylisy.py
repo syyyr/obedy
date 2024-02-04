@@ -270,6 +270,17 @@ def soucku():
                 (dual_entry_match.group(3), price)
             ]
 
+        # Sometimes, two daily menus are on the same line
+        two_daily_menus_match = re.match(r'menu (\d).*menu (\d)', name, flags=re.IGNORECASE)
+        if two_daily_menus_match is not None:
+            menu_one = two_daily_menus_match.group(1)
+            menu_two = two_daily_menus_match.group(2)
+            two_daily_menus_match = re.match(r'.*(polévka.*).*(polévka.*)', name, flags=re.IGNORECASE)
+            return [
+                (f'Menu {menu_one}: {two_daily_menus_match.group(1).capitalize()}', price),
+                (f'Menu {menu_two}: {two_daily_menus_match.group(2).capitalize()}', price),
+            ]
+
         return [(name, price)]
 
     return ('U Součků',) + impl_menicka(2457, func)
