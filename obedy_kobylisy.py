@@ -260,6 +260,7 @@ def soucku():
         name = re.sub(r'^Menu (\d)([^:])', r'Menu \1:\2', name)
 
         name = name.capitalize()
+        name = re.sub(r'polévka', 'Polévka', name)
         name = re.sub(r'^Specialita(\S)', lambda m: m.group(1).upper(), name)
 
         # Sometimes, two meals are on the same row.
