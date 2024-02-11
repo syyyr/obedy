@@ -259,7 +259,6 @@ def soucku():
 
         name = re.sub(r'^Menu (\d)([^:])', r'Menu \1:\2', name)
 
-        name = name.capitalize()
         name = re.sub(r'polévka', 'Polévka', name)
         name = re.sub(r'^Specialita(\S)', lambda m: m.group(1).upper(), name)
 
@@ -276,11 +275,22 @@ def soucku():
         if two_daily_menus_match is not None:
             menu_one = two_daily_menus_match.group(1)
             menu_two = two_daily_menus_match.group(2)
+
+            # Try separating the meals via polévka.
             two_daily_menus_match = re.match(r'.*(polévka.*).*(polévka.*)', name, flags=re.IGNORECASE)
-            return [
-                (f'Menu {menu_one}: {two_daily_menus_match.group(1).capitalize()}', price),
-                (f'Menu {menu_two}: {two_daily_menus_match.group(2).capitalize()}', price),
-            ]
+            if two_daily_menus_match is not None:
+                return [
+                    (f'Menu {menu_one}: {two_daily_menus_match.group(1).capitalize()}', price),
+                    (f'Menu {menu_two}: {two_daily_menus_match.group(2).capitalize()}', price),
+                ]
+
+            # If that doesn't work, separate by searching for a capital letter. That should be start of the meal name.
+            two_daily_menus_match = re.match(r'.*(Polévka.*).*([A-Z].*)', name)
+            if two_daily_menus_match is not None:
+                return [
+                    (f'Menu {menu_one}: {two_daily_menus_match.group(1)}', price),
+                    (f'Menu {menu_two}: Polévka + {two_daily_menus_match.group(2)}', price),
+                ]
 
         return [(name, price)]
 
