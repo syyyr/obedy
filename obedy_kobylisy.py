@@ -192,7 +192,7 @@ def cihelna():
         name = re.sub(r'bram\. kaše', r'bramborová kaše', name)
 
         # Do not shout.
-        name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
+        name = re.sub(r'(\w)(\w*)', lambda m: m.group(1) + m.group(2).lower(), name)
         return [(name, price)]
 
     func.menu_save = None
@@ -223,7 +223,7 @@ def soucku():
             return None
 
         # Do not shout.
-        name = re.sub(r'(\S)(\S*)', lambda m: m.group(1) + m.group(2).lower(), name)
+        name = re.sub(r'(\w)(\w*)', lambda m: m.group(1) + m.group(2).lower(), name)
 
         # Add spaces around plus signs.
         name = re.sub(r'(\+)(\S)', r'\1 \2', name)
