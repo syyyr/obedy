@@ -85,6 +85,7 @@ def impl_menicka(restaurant_id, correction_func):
                 'Speciality:',
                 'Specialita:',
                 'Specialita',
+                'SPECIALITA',
                 'Dezerty',
                 'Saláty',
                 'Specialita zahradnického centra',
