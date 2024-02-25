@@ -287,11 +287,18 @@ def soucku():
                 ]
 
             # If that doesn't work, separate by searching for a capital letter. That should be start of the meal name.
-            two_daily_menus_match = re.match(r'.*(Polévka.*).*([A-Z].*)', name)
+            two_daily_menus_match = re.match(r'.*(Polévka ?\+ ?.*) ?\+ ?([A-Z].*)', name)
             if two_daily_menus_match is not None:
                 return [
                     (f'Menu {menu_one}: {two_daily_menus_match.group(1)}', price),
                     (f'Menu {menu_two}: Polévka + {two_daily_menus_match.group(2)}', price),
+                ]
+
+            # If that doesn't work, we probably only have a menu in this meal. Extract it and return it by itself.
+            two_daily_menus_match = re.match(r'.*(Polévka ?\+ ?[A-Z].*)', name)
+            if two_daily_menus_match is not None:
+                return [
+                    (f'Menu {menu_one}: {two_daily_menus_match.group(1)}', price),
                 ]
 
         return [(name, price)]
