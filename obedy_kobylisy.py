@@ -204,11 +204,11 @@ def cihelna():
 def kozlovna():
     def func(name, price):
         # Sometimes, the salad is on the same row.
-        dual_entry_match = re.match(r'(.+) (\d+),? ?-? ?(.+)', name)
+        dual_entry_match = re.match(r'(.+) (\d+)(,|[^/]) ?-? ?(.+)', name)
         if dual_entry_match is not None:
             return [
                 (dual_entry_match.group(1), dual_entry_match.group(2) + " Kč"),
-                (dual_entry_match.group(3), price)
+                (dual_entry_match.group(4), price)
             ]
 
         name = re.sub(r'Dezert - ', '', name)
