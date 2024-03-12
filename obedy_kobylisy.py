@@ -212,6 +212,7 @@ def kozlovna():
             ]
 
         name = re.sub(r'Dezert - ', '', name)
+        name = re.sub(r'SPECIALITA ', '', name)
         name = re.sub(r'kus-kus', 'kuskus', name)
         name = re.sub(r'Bez lepku', '(bez lepku)', name)
         name = re.sub(r'MENU:?', 'Polední menu:', name)
