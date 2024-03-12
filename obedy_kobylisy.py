@@ -211,12 +211,23 @@ def kozlovna():
                 (dual_entry_match.group(4), price)
             ]
 
+        if func.menu_save is not None:
+            name = f'{func.menu_save} {name}'
+            func.menu_save = None
+
+        # Meal is sometimes on two rows
+        if price == '':
+            func.menu_save = name
+            return None
+
+
         name = re.sub(r'Dezert - ', '', name)
         name = re.sub(r'SPECIALITA ', '', name)
         name = re.sub(r'kus-kus', 'kuskus', name)
         name = re.sub(r'Bez lepku', '(bez lepku)', name)
         name = re.sub(r'MENU:?', 'Polední menu:', name)
         return [(name, price)]
+    func.menu_save = None
     return ('Kozlovna Almara',) + impl_menicka(4165, func)
 
 def soucku():
