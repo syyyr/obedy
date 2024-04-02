@@ -216,7 +216,7 @@ def kozlovna():
             func.menu_save = None
 
         # Meal is sometimes on two rows
-        if price == '':
+        if 'Pro tento den nebylo zadáno menu' not in name and price == '':
             func.menu_save = name
             return None
 
