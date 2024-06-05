@@ -36,11 +36,9 @@ CACHE_DIR = os.getenv('XDG_CACHE_HOME') if os.getenv('XDG_CACHE_HOME') else os.p
 
 requests_cache.install_cache(os.path.join(CACHE_DIR, 'obedy_kobylisy/requests'), 'filesystem', serializer='json', expire_after=CACHE_TIMEOUT) # expire after 30 minutes
 SCREENSHOT_CACHE_FILE_CIHELNA = os.path.join(CACHE_DIR, 'obedy_kobylisy/screenshot_cihelna')
-SCREENSHOT_CACHE_FILE_VYHLIDKA = os.path.join(CACHE_DIR, 'obedy_kobylisy/screenshot_vyhlidka')
 locale.setlocale(locale.LC_TIME, 'cs_CZ.UTF-8') # You better have this locale installed lmao
-ALL_RESTAURANTS = ['blekoti', 'kozlovna', 'cihelna', 'soucku', 'vyhlidka']
+ALL_RESTAURANTS = ['blekoti', 'kozlovna', 'cihelna', 'soucku']
 CIHELNA_URL = 'https://ucihelny.cz'
-VYHLIDKA_URL = 'https://steakyzlatavyhlidka.cz/'
 
 def wait_for_elem(browser, locator):
     try:
@@ -316,53 +314,6 @@ def soucku():
         return [(name, price)]
 
     return ('U Součků',) + impl_menicka(2457, func)
-
-def vyhlidka_screenshot():
-    page_content = requests.get(VYHLIDKA_URL, timeout=5000).text
-    soup = BeautifulSoup(page_content, 'html.parser')
-    source = soup.find('source', {'srcset': re.compile(r'/ws/media-library/[a-z0-9]+/(jidelni-listek-)?.+.webp')})
-    img_url = f'{VYHLIDKA_URL}{source["srcset"]}'
-    response = requests.get(img_url, timeout=5000)
-
-    match_date = re.search(r'[^0-9]+(\d+)\.(\d+)\.(\d+)\.webp', source["srcset"])
-    if match_date is not None:
-        day = date(int(match_date.group(3)) + 2000, int(match_date.group(2)), int(match_date.group(1)))
-    else:
-        day = None
-    if os.path.exists(SCREENSHOT_CACHE_FILE_VYHLIDKA) and os.path.getmtime(SCREENSHOT_CACHE_FILE_VYHLIDKA) + CACHE_TIMEOUT > time.time():
-        with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='r') as f:
-            return (f.read(), VYHLIDKA_URL, day)
-
-    # Crop white border
-    webp = Image.open(BytesIO(response.content))
-    invert_im = webp.convert("RGB")
-    invert_im = ImageOps.invert(webp)
-    x0, y0, x1, y1 = invert_im.getbbox()
-    webp = webp.crop((x0 + 30, y0 + 275, x1 - 15, y1))
-
-    width, height = webp.size
-    webp = webp.resize((int(width * 0.75), int(height * 0.75)))
-
-    png = BytesIO()
-    webp.save(png, "png")
-    screenshot = base64.b64encode(png.getvalue()).decode('utf-8')
-    with open(SCREENSHOT_CACHE_FILE_VYHLIDKA, mode='w') as f:
-        f.write(screenshot)
-    return (screenshot, VYHLIDKA_URL, day)
-
-def vyhlidka():
-    screenshot, source, day = vyhlidka_screenshot()
-    menicka = OrderedDict()
-    monday = date.today() - timedelta(days=date.today().weekday())
-    for k in [monday + timedelta(days=i) for i in range(5)]:
-        if day == k or day is None:
-            menicka[k] = [{'screenshot': screenshot}]
-        else:
-            menicka[k] = [{'name': 'Pro tento den nebylo zadáno menu.', 'price': ''}]
-
-    menicka = (menicka, source)
-
-    return ('Steaky na Zlaté vyhlídce',) + menicka
 
 def main(requested_restaurants, weekday):
     for restaurant in requested_restaurants:
