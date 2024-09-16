@@ -217,7 +217,7 @@ def kozlovna():
         name = re.sub(r'SPECIALITA ', '', name)
         name = re.sub(r'kus-kus', 'kuskus', name)
         name = re.sub(r'Bez lepku', '(bez lepku)', name)
-        name = re.sub(r'(POLEDNÍ )?MENU:?', 'Polední menu:', name)
+        name = re.sub(r'(POLEDNÍ )?MENU( S POLÉVKOU)?:?', 'Polední menu:', name)
         return [(name, price)]
     func.menu_save = None
     return ('Kozlovna Almara',) + impl_menicka(4165, func)
