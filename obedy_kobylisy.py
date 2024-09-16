@@ -11,12 +11,6 @@ from io import BytesIO
 from json import dumps as jsonDump
 from PIL import Image, ImageOps
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support import expected_conditions as EC
-
 import requests_cache
 import requests
 from bs4 import BeautifulSoup
