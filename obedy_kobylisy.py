@@ -52,7 +52,7 @@ def resToJson(input_arg):
     return jsonDump(res)
 
 def impl_menicka(restaurant_id, correction_func):
-    page_url = f'https://www.menicka.cz/tisk.php?restaurace={restaurant_id}'
+    page_url = f'https://www.menicka.cz/tisk-profil.php?restaurace={restaurant_id}'
     page_content = requests.get(page_url, timeout=5000).text
     soup = BeautifulSoup(page_content, 'html.parser')
     all_menus = soup.find_all('div', attrs={'class': 'content'})
